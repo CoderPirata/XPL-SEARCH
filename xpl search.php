@@ -3,7 +3,7 @@
 
 -------------------------------------------------------------------------------
 [ XPL SEARCH 0.1 ]-------------------------------------------------------------
--This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in 5 database:
+-This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in 4 database:
 * MIlw0rm
 * PacketStormSecurity
 * IEDB
@@ -42,8 +42,6 @@ ini_set('display_errors', FALSE);
 ini_set('max_execution_time', FALSE);
 
 $oo = getopt('h::s:p:a::', ['help::', 'search:', 'proxy:', 'proxy-login', 'about::', 'respond-time:', 'banner-no']);
-
-if(realpath(".")[1] != ":") system("clear");
 
 function banner(){
 if(!extension_loaded("curl")){$cr = "LIB cURL disabled, some functions may not work correctly!\n";}	

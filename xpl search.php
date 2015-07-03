@@ -21,6 +21,7 @@ allow_url_fopen   On
 -------------------------------------------------------------------------------
 [ ABOUT DEVELOPER ]------------------------------------------------------------
 NAME              CoderPirata
+EMAIL             coderpirata@gmail.com
 Blog              http://coderpirata.blogspot.com.br/
 Twitter           https://twitter.com/coderpirata
 Google+           https://plus.google.com/103146866540699363823

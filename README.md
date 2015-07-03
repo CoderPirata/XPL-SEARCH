@@ -26,7 +26,7 @@ ABOUT DEVELOPER
 ----
 ```
 Author            CoderPirata
-Blog              [http://coderpirata.blogspot.com.br/
+Blog              http://coderpirata.blogspot.com.br/
 Twitter           https://twitter.com/coderpirata
 Google+           https://plus.google.com/103146866540699363823
 Pastebin          http://pastebin.com/u/CoderPirata

@@ -9,6 +9,7 @@ Search exploits in multiple exploit databases!
  * IntelligentExploit
 ```
 
+
 TO RUN THE SCRIPT
 ----
 ```
@@ -20,13 +21,14 @@ cURL Version      7.40.0
 allow_url_fopen   On
 ```
 
+
 ABOUT DEVELOPER
 ----
 ```
 Author            CoderPirata
-Blog              [http://coderpirata.blogspot.com.br/](http://coderpirata.blogspot.com.br/)
-Twitter           [https://twitter.com/coderpirata](https://twitter.com/coderpirata)
-Google+           [https://plus.google.com/103146866540699363823](https://plus.google.com/103146866540699363823)
-Pastebin          [http://pastebin.com/u/CoderPirata](http://pastebin.com/u/CoderPirata)
-Github            [https://github.com/coderpirata/](https://github.com/coderpirata/)
+Blog              [http://coderpirata.blogspot.com.br/
+Twitter           https://twitter.com/coderpirata
+Google+           https://plus.google.com/103146866540699363823
+Pastebin          http://pastebin.com/u/CoderPirata
+Github            https://github.com/coderpirata/
 ```

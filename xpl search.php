@@ -1,6 +1,8 @@
 <?php
 /*
 
+> https://github.com/CoderPirata/XPL-SEARCH/
+
 -------------------------------------------------------------------------------
 [ XPL SEARCH 0.1 ]-------------------------------------------------------------
 -This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in 4 database:

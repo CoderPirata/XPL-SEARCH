@@ -6,8 +6,8 @@ Search exploits in multiple exploit databases!
  * Exploit-DB
  * MIlw0rm
  * PacketStormSecurity
- * IEDB
  * IntelligentExploit
+ * IEDB
 ```
 
 
@@ -48,6 +48,11 @@ Github            https://github.com/CoderPirata/
 - Add Update Function.
 - "Generator" of User-Agent reworked.
 - Small errors and adaptations.
+
+0.3 - [22/07/2015]
+- Bugs solved.
+- Add "save" Function.
+- Add "set-db" function.
 ```
 
 Screenshot

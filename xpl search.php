@@ -1,11 +1,12 @@
 <?php
 /*
 
+
 Official repository - https://github.com/CoderPirata/XPL-SEARCH/
 
 -------------------------------------------------------------------------------
-[ XPL SEARCH 0.3 ]-------------------------------------------------------------
--This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in 5 database:
+[ XPL SEARCH 0.4 ]-------------------------------------------------------------
+-This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in five database:
 * Exploit-DB
 * MIlw0rm
 * PacketStormSecurity
@@ -20,7 +21,7 @@ cURL support      Enabled
  php5-curl        Lib
 cURL Version      7.40.0
 allow_url_fopen   On
-Permission        Writing
+Permission        Writing/Reading
 
 -------------------------------------------------------------------------------
 [ ABOUT DEVELOPER ]------------------------------------------------------------
@@ -50,6 +51,12 @@ Github            https://github.com/coderpirata/
 - Add "save" Function
 - Add "set-db" function
 
+0.4 - [05/08/2015]
+- Save function modified
+- Add Scan with list
+
+
+If you find any bug or want to make any suggestions, please contact me by email.
 */
 
 ini_set('error_log',NULL);
@@ -60,208 +67,223 @@ ini_set('display_errors', FALSE);
 ini_set('max_execution_time', FALSE);
 $oo = getopt('h::s:p:a::d:', ['set-db:', 'save::', 'update::', 'help::', 'search:', 
                             'proxy:', 'proxy-login', 'about::', 'respond-time:', 
-							'banner-no::', 'save-dir:']);
+							'banner-no::', 'save-dir:', 'search-list:', 'save-log']);
 
 ####################################################################################################
 ## GENERAL FUNCTIONS
 function banner(){
-if(!extension_loaded("curl")){$cr = cores("red")."LIB cURL disabled, some functions may not work correctly!\n".cores("grey");}	
-return cores("grey")."
+if(!extension_loaded("curl")){$cr = cores("r")."LIB cURL disabled, some functions may not work correctly!\n".cores("g1");}	
+return cores("g1")."
 \t.   ..--. .        .-. .---.    .    .--.  .--..   .
 \t \ / |   )|       (   )|       / \   |   ):    |   |
 \t  /  |--' |        `-. |---   /___\  |--' |    |---|
 \t / \ |    |       (   )|     /     \ |  \ :    |   |
-\t'   ''    '---'    `-' '---''       `'   ` `--''   '".cores("red")." 0.3
-".cores("grey2")."------------------------------------------------------------------------------~".cores("grey")."
+\t'   ''    '---'    `-' '---''       `'   ` `--''   '".cores("r")." 0.4
+".cores("g2")."------------------------------------------------------------------------------~".cores("g1")."
 {$cr}
-HELP: {$_SERVER["SCRIPT_NAME"]} ".cores("blue")."--help".cores("grey")."
-USAGE: {$_SERVER["SCRIPT_NAME"]} ".cores("blue")."--search ".cores("grey")."\"name to search\"
-".cores("grey2")."------------------------------------------------------------------------------~\n";
+HELP: {$_SERVER["SCRIPT_NAME"]} ".cores("b")."--help".cores("g1")."
+USAGE: {$_SERVER["SCRIPT_NAME"]} ".cores("b")."--search ".cores("g1")."\"name to search\"
+".cores("g2")."------------------------------------------------------------------------------~\n";
 }
 
 function help(){
 $script = $_SERVER["SCRIPT_NAME"];
-die(cores("grey")."
+die(cores("g1")."
 \t\t.   ..---..    .--.    .-. 
 \t\t|   ||    |    |   )  '   )
 \t\t|---||--- |    |--'      / 
 \t\t|   ||    |    |        '  
 \t\t'   ''---''---''        o  
 
-".cores("grey2").".-----------------------------------------------------------------------------.
-[ ".cores("grey")."MAIN COMMANDS".cores("grey2")." ]-------------------------------------------------------------'".cores("grey")."
+".cores("g2").".-----------------------------------------------------------------------------.
+[ ".cores("g1")."MAIN COMMANDS".cores("g2")." ]-------------------------------------------------------------'".cores("g1")."
 
-COMMAND: ".cores("blue")."--search".cores("grey")." ~ Simple search
-         Example: {$script} ".cores("blue")."--search ".cores("grey")."\"name to search\"
-              Or: {$script} ".cores("blue")."-s ".cores("grey")."\"name to serch\"
+COMMAND: ".cores("b")."--search".cores("g1")." ~ Simple search
+         Example: {$script} ".cores("b")."--search ".cores("g1")."\"name to search\"
+              Or: {$script} ".cores("b")."-s ".cores("g1")."\"name to serch\"
 
-COMMAND: ".cores("blue")."--help".cores("grey")." ~ For view HELP
-         Example: {$script} ".cores("blue")."--help".cores("grey")."
-              Or: {$script} ".cores("blue")."-h".cores("grey")."
+COMMAND: ".cores("b")."--search-list".cores("g1")." ~ Defines a file that will contain the words to be searched. 
+A word should be below another, thus:
+Word
+Other word
+...
+         Example: {$script} ".cores("b")."--search-list ".cores("g1")."\"file.txt\"
 
-COMMAND: ".cores("blue")."--about".cores("grey")." ~ For view ABOUT
-         Example: {$script} ".cores("blue")."--about".cores("grey")."
-              Or: {$script} ".cores("blue")."-a".cores("grey")."
+COMMAND: ".cores("b")."--help".cores("g1")." ~ For view HELP
+         Example: {$script} ".cores("b")."--help".cores("g1")."
+              Or: {$script} ".cores("b")."-h".cores("g1")."
 
-COMMAND: ".cores("blue")."--update".cores("grey")." ~ Command for update the script.
-         Example: {$script} ".cores("blue")."--update".cores("grey2")."
+COMMAND: ".cores("b")."--about".cores("g1")." ~ For view ABOUT
+         Example: {$script} ".cores("b")."--about".cores("g1")."
+              Or: {$script} ".cores("b")."-a".cores("g1")."
+
+COMMAND: ".cores("b")."--update".cores("g1")." ~ Command for update the script.
+         Example: {$script} ".cores("b")."--update".cores("g2")."
 
 .-----------------------------------------------------------------------------.
-[ ".cores("grey")."OTHERS COMMANDS".cores("grey2")." ]-----------------------------------------------------------'".cores("grey")."
+[ ".cores("g1")."OTHERS COMMANDS".cores("g2")." ]-----------------------------------------------------------'".cores("g1")."
 
-COMMAND: ".cores("blue")."--set-db".cores("grey")." ~ Select which databases will be used, using the \"system\" of ID's
-           ".cores("blue")."0".cores("grey")." - ALL (".cores("blue")."DEFAULT".cores("grey").")
-           ".cores("blue")."1".cores("grey")." - Exploit-DB
-           ".cores("blue")."2".cores("grey")." - Milw00rm
-           ".cores("blue")."3".cores("grey")." - PacketStormSecurity
-           ".cores("blue")."4".cores("grey")." - IntelligentExploit
-           ".cores("blue")."5".cores("grey")." - IEDB
-         Example: {$script} ".cores("blue")."--set-db".cores("grey")." 1
-                  {$script} ".cores("blue")."--set-db".cores("grey")." 3,4
-              Or: {$script} ".cores("blue")."-d".cores("grey")." 4,1
+COMMAND: ".cores("b")."--set-db".cores("g1")." ~ Select which databases will be used, using the \"system\" of ID's
+           ".cores("b")."0".cores("g1")." - ALL (".cores("b")."DEFAULT".cores("g1").")
+           ".cores("b")."1".cores("g1")." - Exploit-DB
+           ".cores("b")."2".cores("g1")." - Milw00rm
+           ".cores("b")."3".cores("g1")." - PacketStormSecurity
+           ".cores("b")."4".cores("g1")." - IntelligentExploit
+           ".cores("b")."5".cores("g1")." - IEDB
+         Example: {$script} ".cores("b")."--set-db".cores("g1")." 1
+                  {$script} ".cores("b")."--set-db".cores("g1")." 3,4,2
+              Or: {$script} ".cores("b")."-d".cores("g1")." 4,1
 				
-COMMAND: ".cores("blue")."--save".cores("grey")." ~ Save the exploits found by the tool.
-         Example: {$script} ".cores("blue")."--save".cores("grey")."
+COMMAND: ".cores("b")."--save".cores("g1")." ~ Save the exploits found by the tool.
+         Example: {$script} ".cores("b")."--save".cores("g1")."
 		 
-COMMAND: ".cores("blue")."--save-dir".cores("grey")." ~ Sets the directory for saving files.
-         Example: {$script} ".cores("blue")."--save-dir".cores("grey")." /media/flash_disc/folder/
+COMMAND: ".cores("b")."--save-log".cores("g1")." ~ Saves log of search in the current dir.
+         Example: {$script} ".cores("b")."--save-log".cores("g1")."
+		 
+COMMAND: ".cores("b")."--save-dir".cores("g1")." ~ Sets the directory for saving files.
+         Example: {$script} ".cores("b")."--save-dir".cores("g1")." /media/flash_disc/folder/
 
-COMMAND: ".cores("blue")."--proxy".cores("grey")." ~ Set which proxy to use to perform searches in the dbs.
-         Example: {$script} ".cores("blue")."--proxy".cores("grey")." 127.0.0.1:80
-                  {$script} ".cores("blue")."--proxy".cores("grey")." 127.0.0.1
-              Or: {$script} ".cores("blue")."--p".cores("grey")."
+COMMAND: ".cores("b")."--proxy".cores("g1")." ~ Set which proxy to use to perform searches in the dbs.
+         Example: {$script} ".cores("b")."--proxy".cores("g1")." 127.0.0.1:80
+                  {$script} ".cores("b")."--proxy".cores("g1")." 127.0.0.1
+              Or: {$script} ".cores("b")."--p".cores("g1")."
 
-COMMAND: ".cores("blue")."--proxy-login".cores("grey")." ~ Set username and password to login on the proxy, if necessary.
-         Example: {$script} ".cores("blue")."--proxy-login".cores("grey")." user:pass
+COMMAND: ".cores("b")."--proxy-login".cores("g1")." ~ Set username and password to login on the proxy, if necessary.
+         Example: {$script} ".cores("b")."--proxy-login".cores("g1")." user:pass
 
-COMMAND: ".cores("blue")."--respond-time".cores("grey")." ~ Command to set the maximum time(in seconds) that the databases have for respond.
-         Example: {$script} ".cores("blue")."--respond-time".cores("grey")." 30
+COMMAND: ".cores("b")."--respond-time".cores("g1")." ~ Command to set the maximum time(in seconds) that the databases have for respond.
+         Example: {$script} ".cores("b")."--respond-time".cores("g1")." 30
 
-COMMAND: ".cores("blue")."--banner-no".cores("grey")." ~ Command for does not display the banner.
-         Example: {$script} ".cores("blue")."--banner-no".cores("grey2")."
+COMMAND: ".cores("b")."--banner-no".cores("g1")." ~ Command for does not display the banner.
+         Example: {$script} ".cores("b")."--banner-no".cores("g2")."
 
 ------------------------------------------------------------------------------~\n");
 }
 
 function about(){
-die(cores("grey")."
+die(cores("g1")."
 \t\t    .    .              .  
 \t\t   / \   |             _|_ 
 \t\t  /___\  |.-.  .-. .  . |  
 \t\t /     \ |   )(   )|  | |  
 \t\t'       `'`-'  `-' `--`-`-' 
 
-".cores("grey2").".-----------------------------------------------------------------------------.
-[ ".cores("grey")."XPL SEARCH 0.3".cores("grey2")." ]------------------------------------------------------------'".cores("grey")."
-".cores("blue")."--".cores("grey")." This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in 5 database:
-".cores("blue")."*".cores("grey")." Exploit-DB
-".cores("blue")."*".cores("grey")." MIlw0rm
-".cores("blue")."*".cores("grey")." PacketStormSecurity
-".cores("blue")."*".cores("grey")." IEDB
-".cores("blue")."*".cores("grey")." IntelligentExploit
+".cores("g2").".-----------------------------------------------------------------------------.
+[ ".cores("g1")."XPL SEARCH 0.4".cores("g2")." ]------------------------------------------------------------'".cores("g1")."
+".cores("b")."--".cores("g1")." This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in 5 database:
+".cores("b")."*".cores("g1")." Exploit-DB
+".cores("b")."*".cores("g1")." MIlw0rm
+".cores("b")."*".cores("g1")." PacketStormSecurity
+".cores("b")."*".cores("g1")." IEDB
+".cores("b")."*".cores("g1")." IntelligentExploit
 
-".cores("grey2").".-----------------------------------------------------------------------------.
-[ ".cores("grey")."TO RUN THE SCRIPT".cores("grey2")." ]---------------------------------------------------------'".cores("grey")."
-PHP Version       ".cores("blue")."5.6.8".cores("grey")."
- php5-cli         ".cores("blue")."Lib".cores("grey")."
-cURL support      ".cores("blue")."Enabled".cores("grey")."
- php5-curl        ".cores("blue")."Lib".cores("grey")."
-cURL Version      ".cores("blue")."7.40.0".cores("grey")."
-allow_url_fopen   ".cores("blue")."On".cores("grey")."
-Permission        ".cores("blue")."Writing".cores("grey2")."
+".cores("g2").".-----------------------------------------------------------------------------.
+[ ".cores("g1")."TO RUN THE SCRIPT".cores("g2")." ]---------------------------------------------------------'".cores("g1")."
+PHP Version       ".cores("b")."5.6.8".cores("g1")."
+ php5-cli         ".cores("b")."Lib".cores("g1")."
+cURL support      ".cores("b")."Enabled".cores("g1")."
+ php5-curl        ".cores("b")."Lib".cores("g1")."
+cURL Version      ".cores("b")."7.40.0".cores("g1")."
+allow_url_fopen   ".cores("b")."On".cores("g1")."
+Permission        ".cores("b")."Writing".cores("g2")."/".cores("b")."Reading".cores("g2")."
 
 .-----------------------------------------------------------------------------.
-[ ".cores("grey")."ABOUT DEVELOPER".cores("grey2")." ]-----------------------------------------------------------'".cores("grey")."
-NAME              ".cores("blue")."CoderPirata".cores("grey")."
-Email             ".cores("blue")."coderpirata@gmail.com".cores("grey")."
-Blog              ".cores("blue")."http://coderpirata.blogspot.com.br/".cores("grey")."
-Twitter           ".cores("blue")."https://twitter.com/coderpirata".cores("grey")."
-Google+           ".cores("blue")."https://plus.google.com/103146866540699363823".cores("grey")."
-Pastebin          ".cores("blue")."http://pastebin.com/u/CoderPirata".cores("grey")."
-Github            ".cores("blue")."https://github.com/coderpirata/".cores("grey2")."
+[ ".cores("g1")."ABOUT DEVELOPER".cores("g2")." ]-----------------------------------------------------------'".cores("g1")."
+NAME              ".cores("b")."CoderPirata".cores("g1")."
+Email             ".cores("b")."coderpirata@gmail.com".cores("g1")."
+Blog              ".cores("b")."http://coderpirata.blogspot.com.br/".cores("g1")."
+Twitter           ".cores("b")."https://twitter.com/coderpirata".cores("g1")."
+Google+           ".cores("b")."https://plus.google.com/103146866540699363823".cores("g1")."
+Pastebin          ".cores("b")."http://pastebin.com/u/CoderPirata".cores("g1")."
+Github            ".cores("b")."https://github.com/coderpirata/".cores("g2")."
 ------------------------------------------------------------------------------~\n");
 }
 
 function cores($nome){
-$cores = array("red"     => "\033[1;31m", "green"   => "\033[0;32m", "blue"    => "\033[1;34m",
-               "grey2"   => "\033[1;30m", "grey"    => "\033[0;37m");
+$cores = array("r"     => "\033[1;31m", "g"   => "\033[0;32m", "b"    => "\033[1;34m",
+               "g2"   => "\033[1;30m", "g1"    => "\033[0;37m");
 if(substr(strtolower(PHP_OS), 0, 3) != "win"){ return $cores[strtolower($nome)]; }
 }
 
 function ccdbs($OPT){
 $ids = array(0,1,2,3,4,5);
-foreach($ids as $id){ if(!eregi($id, $OPT["db"])){$o=$o+1;} }
-if($o==6){$OPT["db"]=0;}
+foreach($ids as $idz){ 
+foreach($OPT["db"] as $id){
+ if(!preg_match("/{$idz}/i", $id)){$o=$o+1;} 
+}
+}
+if($o==6){$OPT["db"]= array("0");}
 return $OPT;
 }
 
 function infos($OPT){
-if(!empty($OPT["proxy"]))$proxyR = "\n| ".cores("grey")."PROXY - ".cores("blue").$OPT["proxy"];
-if(!empty($OPT["time"])){$timeL  = cores("blue").$OPT["time"].cores("grey")." sec"; }else{ $timeL = cores("blue")."INDEFINITE"; }	
+if(!empty($OPT["proxy"])){$proxyR = "\n| ".cores("g1")."PROXY - ".cores("b").$OPT["proxy"];}
+if(!empty($OPT["time"])){$timeL  = cores("b").$OPT["time"].cores("g1")." sec"; }else{ $timeL = cores("b")."INDEFINITE"; }
+if(isset($OPT["sfile"])){ $OPT["find"]=cores("b").$OPT["sfile"].cores("g1")." is a list!";  }
 
 if($OPT["save"]==1){
-$save_xpl = cores("blue")."YES".cores("grey2")."\n| ".cores("grey")."SAVE IN ".cores("blue");
+$save_xpl = cores("b")."YES".cores("g2")."\n| ".cores("g1")."SAVE IN ".cores("b");
  if(isset($OPT["save-dir"]) and !empty($OPT["save-dir"])){
- $save_xpl = $save_xpl.$OPT["save-dir"].cores("grey2");
+ $save_xpl .= cores("b")."\"{$OPT["save-dir"]}\"".cores("g2");
    if(!is_dir($OPT["save-dir"])){ 
-    $save_xpl=$save_xpl." [".cores("red")."ERROR WITH DIR".cores("grey2")."]";   
+    $save_xpl .= " [".cores("r")."ERROR WITH DIR ".cores("g2")."-".cores("b")." CURRENT DIR WILL BE USED!".cores("g2")."]";   
    }else{
-	$save_xpl=$save_xpl." [".cores("green")."DIR OK".cores("grey2")."]";   
+	$save_xpl .=" [".cores("g")."DIR OK".cores("g2")."]";   
    }
  }else{
-  $save_xpl = $save_xpl.realpath(".").DIRECTORY_SEPARATOR.cores("grey2")." [ ".cores("blue")."CURRENT DIR".cores("grey2")." ]";
+  $save_xpl .= cores("b")."CURRENT DIR".cores("g2");
  }
-}else{ $save_xpl = cores("blue")."NOT".cores("grey2"); }
+}else{ $save_xpl = cores("b")."NOT".cores("g2"); }
 
-if($OPT["db"] == 0){ $setdb = cores("grey2")."[ ".cores("blue")."ALL".cores("grey2")." ] "; }
-if(eregi(1, $OPT["db"])){ $setdb .= cores("grey2")."[ ".cores("blue")."EXPLOIT-DB".cores("grey2")." ] "; }
-if(eregi(2, $OPT["db"])){ $setdb .= cores("grey2")."[ ".cores("blue")."MILW0RM".cores("grey2")." ] "; }
-if(eregi(3, $OPT["db"])){ $setdb .= cores("grey2")."[ ".cores("blue")."PACKETSTORMSECURITY".cores("grey2")." ] "; }
-if(eregi(4, $OPT["db"])){ $setdb .= cores("grey2")."[ ".cores("blue")."INTELLIGENTEXPLOIT".cores("grey2")." ] "; }
-if(eregi(5, $OPT["db"])){ $setdb .= cores("grey2")."[ ".cores("blue")."IEDB".cores("grey2")." ] "; }
+foreach($OPT["db"] as $id){
+ if($id == 0){ $setdb = cores("g2")."[ ".cores("b")."ALL".cores("g2")." ] "; }
+ if(preg_match("/1/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."EXPLOIT-DB".cores("g2")." ] "; }
+ if(preg_match("/2/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."MILW0RM".cores("g2")." ] "; }
+ if(preg_match("/3/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."PACKETSTORMSECURITY".cores("g2")." ] "; }
+ if(preg_match("/4/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."INTELLIGENTEXPLOIT".cores("g2")." ] "; }
+ if(preg_match("/5/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."IEDB".cores("g2")." ] "; }
+}
 
-return cores("grey2").".-[ ".cores("grey")."Infos".cores("grey2")." ]-------------------------------------------------------------------.
-| ".cores("grey")."SEARCH FOR  ".cores("blue")."{$OPT["find"]}".cores("grey2")."{$proxyR}
-| ".cores("grey")."TIME LIMIT FOR DBS RESPOND: {$timeL}".cores("grey2")."
-| ".cores("grey")."SAVE EXPLOIT's: {$save_xpl}
-| ".cores("grey")."DATABASES TO SEARCH: {$setdb}
-'-----------------------------------------------------------------------------'\n\n";
+return cores("g2").".-[ ".cores("g1")."Infos".cores("g2")." ]-------------------------------------------------------------------.
+| ".cores("g1")."SEARCH FOR  ".cores("b")."{$OPT["find"]}".cores("g2")."{$proxyR}
+| ".cores("g1")."TIME LIMIT FOR DBS RESPOND: {$timeL}".cores("g2")."
+| ".cores("g1")."SAVE EXPLOIT's: {$save_xpl}
+| ".cores("g1")."DATABASES TO SEARCH: {$setdb}
+'-----------------------------------------------------------------------------'
+'[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]'\n\n";
 }
 
 function update($OPT){
-echo cores("grey")."\nUpdating, wait...\n";
+echo cores("g1")."\nUpdating, wait...\n";
 
 $OPT["url"] = "https://raw.githubusercontent.com/CoderPirata/XPL-SEARCH/master/xpl%20search.php";
 $update = browser($OPT);
 
-if(!eregi("#END", $update["file"])){ die(cores("red")."\nIt seems that the code has not been fully updated.\n Canceled update, try again...\n"); }
+if(!preg_match("/#END/i", $update["file"])){ die(cores("r")."\nIt seems that the code has not been fully updated.\n Canceled update, try again...\n"); }
 
 file_put_contents(__FILE__,  $update["file"]);
-die(cores("green")."\nUpdate DONE!");
+die(cores("g")."\nUpdate DONE!");
 }
 
 function save($save){
+$n = PHP_EOL;
 $ds = DIRECTORY_SEPARATOR;
-$svd = "| ".cores("grey")."SAVED: ";
+$svd = "| ".cores("g1")."SAVED: ";
 
-if(eregi("milw00rm.org/", $save["link"])){ 
-$save["url"] = trim(str_replace("LINK::", "", $save["link"]));
-$save["title"] = trim(str_replace("NAME::", "", $save["title"]));
+if(preg_match("/milw00rm.org/i", $save["url"])){ 
 $resultado = browser($save);
 preg_match_all('/pre>(.+)<\/pre/s', htmlspecialchars_decode($resultado["file"]), $xpl);
 $save["xpl"] = $xpl[1];
 $save["dbs"] = "milw00rm";
-if(!eregi("# milw00rm.org", $save["xpl"])){$ok=$ok+1;}
+if(!preg_match("/# milw00rm.org/i", $save["xpl"])){$ok=$ok+1;}
 }
 
-if(eregi("iedb.ir/", $save["link"])){ 
-$save["url"] = trim(str_replace("LINK::", "", $save["link"]));
-$save["title"] = trim(str_replace("NAME::", "", $save["title"]));
+if(preg_match("/iedb.ir/i", $save["url"])){ 
 $resultado = browser($save);
 preg_match_all('/pre>(.+)<\/pre/s', htmlspecialchars_decode($resultado["file"]), $xpl);
 $save["xpl"] = $xpl[1];
 $save["dbs"] = "iedb";
-if(!eregi("# Iranian Exploit DataBase =", $save["xpl"])){$ok=$ok+1;} 
+if(!preg_match("/# Iranian Exploit DataBase =/i", $save["xpl"])){$ok=$ok+1;} 
 }
 
 if(preg_match("/packetstormsecurity.com/i", $save["url"])){
@@ -276,44 +298,50 @@ $save["dbs"] = "packetstormsecurity";
 if(empty($save["xpl"])){$ok=$ok+1;}
 }
 
-if(eregi("intelligentexploit.com/", $save["url"])) {
+if(preg_match("/intelligentexploit.com/i", $save["url"])) {
 $resultado = browser($save);
 preg_match_all('/<\/HEAD><BODY>(.+)<\/BODY>/s', htmlspecialchars_decode($resultado["file"]), $xpl);
 preg_match_all('/<script type="text\/javascript">(.+)<\/script>/s', $xpl[1][0], $xpl_l);
 $save["xpl"] = trim(str_replace($xpl_l[0][0], "", $xpl[1][0]));
 $save["xpl"] = trim(str_replace("&#039;", "'", $save["xpl"]));
 $save["dbs"] = "intelligentexploit";
-if(eregi("</HEAD><BODY>", htmlspecialchars_decode($resultado["file"]))){$ok=$ok+1;} 
+if(preg_match("/<\/HEAD><BODY>/i", htmlspecialchars_decode($resultado["file"]))){$ok=$ok+1;} 
 }
 
-if(eregi("exploit-db.com/", $save["url"])){ 
+if(preg_match("/exploit-db.com/i", $save["url"])){ 
 preg_match_all('#/exploits/(.*?)/#', $save["url"], $xpl_link);
 $save["url"] = "https://www.exploit-db.com/download/".$xpl_link[1][0];
 $resultado = browser($save);
 $save["xpl"] = $resultado["file"];
 $save["dbs"] = "exploit-db";
-if(eregi("<div class=\"w-copyright\">© Copyright 2015 Exploit Database</div>", $save["xpl"])){$ok=$ok+1;} 
+if(preg_match("/<div class=\"w-copyright\">© Copyright 2015 Exploit Database<\/div>/i", $save["xpl"])){$ok=$ok+1;} 
 }
 
-if($ok!=5){
+if($ok!=5 and !empty($save["xpl"])){
 $save["title"] = trim(str_replace("/", "-", $save["title"]));
 if(isset($save["save-dir"])){
 $svdr = $save["save-dir"]; 
-$bmk = $save["save-dir"].$ds.$save["find"].$ds;
+$bmk = $save["save-dir"].$ds."logs".$ds;
 if(!is_dir($svdr)){ goto pula; }
-mkdir($bmk);
-mkdir($bmk.$save["dbs"].$ds);
-}else{
-pula:
-$bmk = $save["find"].$ds;
-mkdir($bmk);
-mkdir($bmk.$save["dbs"].$ds);
+mkdir($bmk); mkdir($bmk.$save["find"].$ds); mkdir($bmk.$save["find"].$ds.$save["dbs"].$ds);
+$bmk .= $save["find"].$ds.$save["dbs"].$ds;
+}else{ pula:
+$bmk = "logs".$ds;
+mkdir($bmk); mkdir($bmk.$save["find"].$ds); mkdir($bmk.$save["find"].$ds.$save["dbs"].$ds);
+$bmk .= $save["find"].$ds.$save["dbs"].$ds;
 }
-file_put_contents($bmk.$save["dbs"].$ds.$save["title"].".txt", $save["xpl"]);
-return "{$svd}".cores("green")."YES\n".cores("grey2")."|\n";
-}else{
-return "{$svd}".cores("red")."NOT\n".cores("grey2")."|\n";
+
+file_put_contents($bmk.$ds.$save["title"].".txt", $save["xpl"]);
+return "{$svd}".cores("g")."YES\n".cores("g2")."|\n";
+}else{ return "{$svd}".cores("r")."NOT\n".cores("g2")."|\n"; }
+
 }
+
+function save_log($OPT){
+$ds = DIRECTORY_SEPARATOR;
+$n = PHP_EOL;
+mkdir("logs".$ds);
+file_put_contents("logs".$ds."search_log.txt", "TITLE: ".$OPT["title"].$n."LINK: ".$OPT["url"].$n.$n, FILE_APPEND);
 }
 
 function browser($browser){
@@ -369,9 +397,9 @@ $opts['http']['method']  = "GET";
 $opts['https']['method'] = "GET";
 }else{ 
 $opts['http']['content']  = $browser["post"];
-$opts['http']['method']  = "POST";
+$opts['http']['method']  = "GET";
 $opts['https']['content'] = $browser["post"];
-$opts['https']['method'] = "POST";
+$opts['https']['method'] = "GET";
 }
 
 if($browser["time"]!=""){
@@ -408,41 +436,40 @@ return $resultado;
 ####################################################################################################
 ## DATABASES
 function milw00rm($OPT){
-echo "\n".cores("grey2")."[ ".cores("grey")."MILW00RM.org ".cores("grey2")."]:: ";	
+echo "\n".cores("g2")."[ ".cores("g1")."MILW00RM.org ".cores("g2")."]:: ";	
 $resultado=NULL;
 $save=array();
 $info = array('search' => $OPT["find"], 'Submit' => 'Submit');
 $browser = array("url" => "http://milw00rm.org/search.php", "proxy" => $OPT["proxy"], "post" => $info, "time" => $OPT["time"]);
 $resultado = browser($browser);
 
-file_put_contents("file.txt", $resultado["file"]);
-
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("grey2")."Retrying... "; $resultado = browser($browser); }
+echo cores("g2")."Retrying... "; $resultado = browser($browser); }
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("red")."Error with the connection...\n\n".cores("grey2"); goto saida; }
+echo cores("r")."Error with the connection...\n\n".cores("g2"); goto saida; }
 
-if(!eregi('<td class="style1">-::DATE</td>', $resultado["file"]) or empty($resultado["file"])){ 
-echo cores("red")."NOT FOUND\n".cores("grey2");
+if(!preg_match('/<td class="style1">-::DATE<\/td>/i', $resultado["file"]) or empty($resultado["file"])){ 
+echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
-echo cores("green")."FOUND".cores("grey2")."\n.-----------------------------------------------------------------------------.\n|\n".cores("grey")."";
+echo cores("g")."FOUND".cores("g2")."\n.-----------------------------------------------------------------------------.\n|\n".cores("g1")."";
 preg_match_all('#<a href="(.*?)" target="_blank" class="style1">(.*?)</a>#', $resultado["file"], $a);
 foreach($a[0] as $v){ 
-$var = str_replace('<a href="', cores("grey")."LINK:: ".cores("blue")."http://milw00rm.org/", $v);
-$var = str_replace('" target="_blank" class="style1">', "\n".cores("grey")."NAME:: ".cores("blue")."", $var);
+$var = str_replace('<a href="', cores("g1")."http://milw00rm.org/", $v);
+$var = str_replace('" target="_blank" class="style1">', "\n", $var);
 $var = str_replace("</a>", "", $var);
 $fim = explode("\n", $var);
-echo cores("grey2")."| ".htmlspecialchars_decode($fim[1])."\n".cores("grey2")."| ".$fim[0]."\n".cores("grey2");
-$save["title"] = htmlspecialchars_decode($fim[1]); $save["link"] = $fim[0]; $save = array_merge($OPT, $save);
+echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b").htmlspecialchars_decode($fim[1])."\n".cores("g2")."| ".cores("g1")."LINK:: ".cores("b").$fim[0]."\n".cores("g2");
+$save["title"] = htmlspecialchars_decode($fim[1]); $save["url"] = $fim[0]; $save = array_merge($OPT, $save);
 if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+if($OPT["save-log"]==1){echo save_log($save);}
 }
-echo cores("grey2")."'-----------------------------------------------------------------------------'\n";
+echo cores("g2")."'-----------------------------------------------------------------------------'\n";
 }
 saida:
 }
 
 function packetstormsecurity($OPT){
-echo "\n".cores("grey2")."[ ".cores("grey")."PACKETSTORMSECURITY.com ".cores("grey2")."]:: ";
+echo "\n".cores("g2")."[ ".cores("g1")."PACKETSTORMSECURITY.com ".cores("g2")."]:: ";
 $resultado=NULL;
 $id_pages=2;
 $id_info=0;
@@ -451,27 +478,28 @@ $browser = array("url" => "https://packetstormsecurity.com/search/?q={$OPT["find
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("grey2")."Retrying... "; $resultado = browser($browser); }
+echo cores("g2")."Retrying... "; $resultado = browser($browser); }
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("red")."Error with the connection...\n\n".cores("grey2"); goto saida; }
+echo cores("r")."Error with the connection...\n\n".cores("g2"); goto saida; }
 
-if(eregi('<title>No Results Found', $resultado["file"]) or empty($resultado["file"])){ 
-echo cores("red")."NOT FOUND\n".cores("grey2");
+if(preg_match('/<title>No Results Found/i', $resultado["file"]) or empty($resultado["file"])){ 
+echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
-echo cores("green")."FOUND\n".cores("grey2").".-----------------------------------------------------------------------------.\n|\n";
+echo cores("g")."FOUND\n".cores("g2").".-----------------------------------------------------------------------------.\n|\n";
 while($id_pages < 100){	
 preg_match_all('#<a class="ico text-plain" href="(.*?)" title="(.*?)">(.*?)<\/a>#', $resultado["file"], $a);
 
 while($id_info < count($a[0])){ 
-echo cores("grey2")."| ".cores("grey")."NAME:: ".cores("blue")."".htmlspecialchars_decode($a[3][$id_info])."\n";
+echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b")."".htmlspecialchars_decode($a[3][$id_info])."\n";
 preg_match_all('#/files/(.*?)/#', $a[1][$id_info], $ab);
-echo cores("grey2")."| ".cores("grey")."LINK:: ".cores("blue")."https://packetstormsecurity.com/files/{$ab[1][0]}/\n".cores("grey2");
+echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."https://packetstormsecurity.com/files/{$ab[1][0]}/\n".cores("g2");
 $save["title"] = htmlspecialchars_decode($a[3][$id_info]); $save["url"] = "https://packetstormsecurity.com/files/{$ab[1][0]}/"; $save = array_merge($OPT, $save);
 if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+if($OPT["save-log"]==1){echo save_log($save);}
 $id_info++;
 }
 
-if(eregi('accesskey="]">Next</a>', $resultado["file"])){
+if(preg_match('/accesskey="]">Next<\/a>/i', $resultado["file"])){
 $browser["url"]="https://packetstormsecurity.com/search/files/page{$id_pages}/?q={$OPT["find"]}";
 $resultado = browser($browser);
 }else{ goto fim_; }
@@ -480,78 +508,80 @@ $id_pages++;
 }
 
 fim_:
-echo cores("grey2")."'-----------------------------------------------------------------------------'\n";
+echo cores("g2")."'-----------------------------------------------------------------------------'\n";
 }
 saida:
 }
 
 function iedb($OPT){
-echo "\n".cores("grey2")."[ ".cores("grey")."IEDB.ir ".cores("grey2")."]:: ";	
+echo "\n".cores("g2")."[ ".cores("g1")."IEDB.ir ".cores("g2")."]:: ";	
 $resultado=NULL;
 $info = array('search' => $OPT["find"], 'Submit' => 'Submit');
 $browser = array("url" => "http://iedb.ir/search.php", "proxy" => $OPT["proxy"], "post" => $info, "time" => $OPT["time"]);
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("grey2")."Retrying... "; $resultado = browser($browser); }
+echo cores("g2")."Retrying... "; $resultado = browser($browser); }
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("red")."Error with the connection...\n\n".cores("grey2"); goto saida; }
+echo cores("r")."Error with the connection...\n\n".cores("g2"); goto saida; }
 
-if(!eregi('<td class="style1">-::DATE</td>', $resultado["file"]) or empty($resultado["file"])){ 
-echo cores("red")."NOT FOUND\n".cores("grey2");
+if(!preg_match('/<td class="style1">-::DATE<\/td>/i', $resultado["file"]) or empty($resultado["file"])){ 
+echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
-echo cores("green")."FOUND\n".cores("grey2").".-----------------------------------------------------------------------------.\n|\n";
+echo cores("g")."FOUND\n".cores("g2").".-----------------------------------------------------------------------------.\n|\n";
 preg_match_all('#<a href="(.*?)" target="_blank" class="style1">(.*?)</a>#', $resultado["file"], $a);
 foreach($a[0] as $v){ 
-$var = str_replace('<a href="', cores("grey")."LINK:: ".cores("blue")."http://iedb.ir/", $v);
-$var = str_replace('" target="_blank" class="style1">', "\nNAME:: ".cores("blue")."", $var);
+$var = str_replace('<a href="', cores("g1")."http://iedb.ir/", $v);
+$var = str_replace('" target="_blank" class="style1">', "\n", $var);
 $var = str_replace("</a>", "", $var);
 $fim = explode("\n", $var);
-echo cores("grey2")."| ".cores("grey").htmlspecialchars_decode($fim[1])."\n".cores("grey2")."| ".$fim[0]."\n".cores("grey2");
-$save["title"] = htmlspecialchars_decode($fim[1]); $save["link"] = $fim[0]; $save = array_merge($OPT, $save);
+echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b").htmlspecialchars_decode($fim[1])."\n".cores("g2")."| ".cores("g1")."LINK:: ".cores("b").$fim[0]."\n".cores("g2");
+$save["title"] = htmlspecialchars_decode($fim[1]); $save["url"] = $fim[0]; $save = array_merge($OPT, $save);
 if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+if($OPT["save-log"]==1){echo save_log($save);}
 }
-echo cores("grey2")."'-----------------------------------------------------------------------------'\n";
+echo cores("g2")."'-----------------------------------------------------------------------------'\n";
 }
 saida:
 }
 
 function intelligentexploit($OPT){
-echo "\n".cores("grey2")."[ ".cores("grey")."INTELLIGENTEXPLOIT.com ".cores("grey2")."]:: ";
+echo "\n".cores("g2")."[ ".cores("g1")."INTELLIGENTEXPLOIT.com ".cores("g2")."]:: ";
 $resultado=NULL;
 $browser = array("url" => "http://www.intelligentexploit.com/api/search-exploit?name=".$OPT["find"], "proxy" => $OPT["proxy"], "post" => "", "time" => $OPT["time"]);
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("grey2")."Retrying... "; $resultado = browser($browser); }
+echo cores("g2")."Retrying... "; $resultado = browser($browser); }
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("red")."Error with the connection...\n\n".cores("grey2"); goto saida; }
+echo cores("r")."Error with the connection...\n\n".cores("g2"); goto saida; }
 
 if(empty($resultado["file"])){
-echo cores("red")."NOT FOUND\n".cores("grey2");
+echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
-echo cores("green")."FOUND\n".cores("grey2").".-----------------------------------------------------------------------------.\n|\n";
+echo cores("g")."FOUND\n".cores("g2").".-----------------------------------------------------------------------------.\n|\n";
 preg_match_all('#{"id":"(.*?)","date":"(.*?)","name":"(.*?)"}#', $resultado["file"], $a);
 
 $i=0;
 while($i < count($a[0])){
-echo cores("grey2")."| ".cores("grey")."NAME:: ".cores("blue")."".htmlspecialchars_decode(str_replace("\/", "/", $a[3][$i]))."\n";
-echo cores("grey2")."| ".cores("grey")."LINK:: ".cores("blue")."https://www.intelligentexploit.com/view-details.html?id={$a[1][$i]}\n".cores("grey2");
+echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b")."".htmlspecialchars_decode(str_replace("\/", "/", $a[3][$i]))."\n";
+echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."https://www.intelligentexploit.com/view-details.html?id={$a[1][$i]}\n".cores("g2");
 
 $save["title"] = htmlspecialchars_decode(str_replace("\/", "/", $a[3][$i])); 
 $save["url"] = "https://www.intelligentexploit.com/view-details.html?id={$a[1][$i]}"; 
 $save = array_merge($OPT, $save);
 if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+if($OPT["save-log"]==1){echo save_log($save);}
 
 $i++;
 }
-echo cores("grey")."'-----------------------------------------------------------------------------'\n";
+echo cores("g1")."'-----------------------------------------------------------------------------'\n";
 }
 saida:
 }
 
 function exploitdb($OPT){
-echo "\n".cores("grey2")."[ ".cores("grey")."EXPLOIT-DB.com ".cores("grey2")."]:: ";	
+echo "\n".cores("g2")."[ ".cores("g1")."EXPLOIT-DB.com ".cores("g2")."]:: ";	
 $resultado=NULL;
 $id_pages=2;
 
@@ -559,27 +589,28 @@ $browser = array("url" => "https://www.exploit-db.com/search/?action=search&desc
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("grey2")."Retrying... "; $resultado = browser($browser); }
+echo cores("g2")."Retrying... "; $resultado = browser($browser); }
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo cores("red")."Error with the connection...\n\n".cores("grey2"); goto saida; }
+echo cores("r")."Error with the connection...\n\n".cores("g2"); goto saida; }
 
-if(eregi('No results', $resultado["file"]) or empty($resultado["file"])){
-echo cores("red")."NOT FOUND\n".cores("grey2");
+if(preg_match('/No results/i', $resultado["file"]) or empty($resultado["file"])){
+echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
-echo cores("green")."FOUND\n".cores("grey2")."+-----------------------------------------------------------------------------.\n|\n";
+echo cores("g")."FOUND\n".cores("g2")."+-----------------------------------------------------------------------------.\n|\n";
 
 while($id_pages < 100){ $id_info=0;
 preg_match_all('#<a href="https://www.exploit-db.com/exploits/(.*?)/">(.*?)</a>#', $resultado["file"], $a, PREG_SET_ORDER);
 
 while($id_info < count($a)){ 
-echo cores("grey2")."| ".cores("grey")."NAME:: ".cores("blue")."".htmlspecialchars_decode($a[$id_info][2])."\n";
-echo cores("grey2")."| ".cores("grey")."LINK:: ".cores("blue")."https://www.exploit-db.com/exploits/{$a[$id_info][1]}/".cores("grey2")."\n".cores("grey2");
+echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b")."".htmlspecialchars_decode($a[$id_info][2])."\n";
+echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."https://www.exploit-db.com/exploits/{$a[$id_info][1]}/".cores("g2")."\n".cores("g2");
 $save["title"] = htmlspecialchars_decode($a[$id_info][2]); $save["url"] = "https://www.exploit-db.com/exploits/{$a[$id_info][1]}/"; $save = array_merge($OPT, $save);
 if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+if($OPT["save-log"]==1){echo save_log($save);}
 $id_info++;
 }
 
-if(eregi('>next</a>', $resultado["file"])){
+if(preg_match('/>next<\/a>/i', $resultado["file"])){
 $browser["url"]="https://www.exploit-db.com/search/?action=search&description={$OPT["find"]}&pg={$id_pages}&text=&cve=&e_author=&platform=0&type=0&lang_id=0&port=&osvdb=";
 $resultado = browser($browser);
 }else{ goto fim_; }
@@ -587,7 +618,7 @@ $id_pages++;
 }
 
 fim_:
-echo cores("grey2")."'-----------------------------------------------------------------------------'\n";
+echo cores("g2")."'-----------------------------------------------------------------------------'\n";
 }
 saida:
 }
@@ -604,28 +635,44 @@ if(isset($oo["search"])){$OPT["find"]=$oo["search"];}else{$O=$O+1;}
 if(isset($oo["p"])){$OPT["proxy"]=$oo["p"];}
 if(isset($oo["proxy"])){$OPT["proxy"]=$oo["proxy"];}
 if(isset($oo["respond-time"])){$OPT["time"]=$oo["respond-time"];}
-if(isset($OPT["proxy-login"])){$OPT["proxy-login"]=$oo["proxy-login"];}
+if(isset($oo["proxy-login"])){$OPT["proxy-login"]=$oo["proxy-login"];}
 if(isset($oo["update"])){echo update($OPT);}
 if(isset($oo["save"])){$OPT["save"] = 1;}
 if(isset($oo["save-dir"])){$OPT["save-dir"] = $oo["save-dir"];}
-if(isset($oo["set-db"])){$OPT["db"] = $oo["set-db"];}
+if(isset($oo["save-log"])){$OPT["save-log"] = 1;}
+if(isset($oo["set-db"])){ $OPT["db"] = explode(",", $oo["set-db"]);}
 if(isset($oo["d"])){$OPT["db"] = $oo["d"];}
+if(isset($oo["search-list"])){if(!file_exists($oo["search-list"])){ die(cores("r")."\nFILE \"{$oo["search-list"]}\" does not exist!\n"); }else{$OPT["sfile"]=$oo["search-list"];$O=$O+1;}}
 if($O==2)die();
 
 ####################################################################################################
 ## VERIFY SET-DB
-$OPT = ccdbs($OPT);
+if(isset($OPT["db"])){ $OPT = ccdbs($OPT); }
 
 ####################################################################################################
 ## INFOS
 echo infos($OPT);
 
 ####################################################################################################
-## STARTING THE SEARCH 
-if(eregi(1, $OPT["db"]) or $OPT["db"] == 0){ echo exploitdb($OPT);           }
-if(eregi(2, $OPT["db"]) or $OPT["db"] == 0){ echo milw00rm($OPT);            }
-if(eregi(3, $OPT["db"]) or $OPT["db"] == 0){ echo packetstormsecurity($OPT); }
-if(eregi(4, $OPT["db"]) or $OPT["db"] == 0){ echo intelligentexploit($OPT);  }
-if(eregi(5, $OPT["db"]) or $OPT["db"] == 0){ echo iedb($OPT);                }
+## FILE SEARCH
+if(file_exists($OPT["sfile"])){
+$file = file_get_contents($OPT["sfile"]);
+if(empty($file)){ die(cores("r")."File \"{$OPT["sfile"]}\" are empty!"); } 
+$file = explode("\n", $file);
+}else{ $file = array($OPT["find"]); }
+
+####################################################################################################
+## STARTING THE SEARCH
+foreach($file as $f){
+$OPT["find"] = trim($f);
+if(file_exists($OPT["sfile"])){ echo cores("g2")."\n[ ".cores("g1")."FIND:: ".cores("b").$OPT["find"].cores("g2")." ]::|::|::|::|::|::|::|::|::|::|::-"; }
+foreach($OPT["db"] as $id){
+ if(preg_match("/1/i", $id) or $id == 0){ echo exploitdb($OPT);           }
+ if(preg_match("/2/i", $id) or $id == 0){ echo milw00rm($OPT);            }
+ if(preg_match("/3/i", $id) or $id == 0){ echo packetstormsecurity($OPT); }
+ if(preg_match("/4/i", $id) or $id == 0){ echo intelligentexploit($OPT);  }
+ if(preg_match("/5/i", $id) or $id == 0){ echo iedb($OPT);                }
+}
+}
 
 #END

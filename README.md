@@ -20,7 +20,7 @@ cURL support      Enabled
  php5-curl        Lib
 cURL Version      7.40.0
 allow_url_fopen   On
-Permission        Writing
+Permission        Writing/Reading
 ```
 
 
@@ -53,8 +53,16 @@ Github            https://github.com/CoderPirata/
 - Bugs solved.
 - Add "save" Function.
 - Add "set-db" function.
+
+0.4 - [05/08/2015]
+- Save function modified.
+- Add Scan with list.
 ```
 
 Screenshot
 ----
+![images](http://2.bp.blogspot.com/-_zxNoFeLuHk/VcLdwG4g8dI/AAAAAAAAAJM/VXmDTolozeU/s640/banner_xpl-search.png)
+![images](http://3.bp.blogspot.com/-CxthKPMjNG0/VcLd0XmFavI/AAAAAAAAAJU/Wq8B36XqGe0/s640/xpl-search_search.png)
 ![images](http://3.bp.blogspot.com/-NSSG62oae_A/VaHi2IBYyDI/AAAAAAAAAFA/LHXgo5BWnBo/s1600/revslider-search.png)
+
+If you find any bug or want to make any suggestions, please contact me by email.

@@ -1,11 +1,10 @@
 <?php
 /*
 
-
 Official repository - https://github.com/CoderPirata/XPL-SEARCH/
 
 -------------------------------------------------------------------------------
-[ XPL SEARCH 0.4 ]-------------------------------------------------------------
+[ XPL SEARCH 0.5 ]-------------------------------------------------------------
 -This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in five database:
 * Exploit-DB
 * MIlw0rm
@@ -26,7 +25,6 @@ Permission        Writing/Reading
 -------------------------------------------------------------------------------
 [ ABOUT DEVELOPER ]------------------------------------------------------------
 NAME              CoderPirata
-Email             coderpirata@gmail.com
 Blog              http://coderpirata.blogspot.com.br/
 Twitter           https://twitter.com/coderpirata
 Google+           https://plus.google.com/103146866540699363823
@@ -40,20 +38,23 @@ Github            https://github.com/coderpirata/
 - Started.
 
 0.2 - [12/07/2015]
-- Add Exploit-DB.
-- Add Colors, only for linux!
-- Add Update Function.
+- Added Exploit-DB.
+- Added Colors, only for linux!
+- Added Update Function.
 - "Generator" of User-Agent reworked.
 - Small errors and adaptations.
 
 0.3 - [22/07/2015]
 - Bugs solved
-- Add "save" Function
-- Add "set-db" function
+- Added "save" Function
+- Added "set-db" function
 
 0.4 - [05/08/2015]
 - Save function modified
-- Add Scan with list
+- Added search with list
+
+0.5 - [18/08/2015]
+- Added search by Author
 
 
 If you find any bug or want to make any suggestions, please contact me by email.
@@ -65,7 +66,7 @@ ini_restore("allow_url_fopen");
 ini_set('allow_url_fopen',TRUE);
 ini_set('display_errors', FALSE);
 ini_set('max_execution_time', FALSE);
-$oo = getopt('h::s:p:a::d:', ['set-db:', 'save::', 'update::', 'help::', 'search:', 
+$oo = getopt('h::s:p:a::d:', ['author:', 'set-db:', 'save::', 'update::', 'help::', 'search:', 
                             'proxy:', 'proxy-login', 'about::', 'respond-time:', 
 							'banner-no::', 'save-dir:', 'search-list:', 'save-log']);
 
@@ -78,7 +79,7 @@ return cores("g1")."
 \t \ / |   )|       (   )|       / \   |   ):    |   |
 \t  /  |--' |        `-. |---   /___\  |--' |    |---|
 \t / \ |    |       (   )|     /     \ |  \ :    |   |
-\t'   ''    '---'    `-' '---''       `'   ` `--''   '".cores("r")." 0.4
+\t'   ''    '---'    `-' '---''       `'   ` `--''   '".cores("r")." 0.5
 ".cores("g2")."------------------------------------------------------------------------------~".cores("g1")."
 {$cr}
 HELP: {$_SERVER["SCRIPT_NAME"]} ".cores("b")."--help".cores("g1")."
@@ -101,13 +102,6 @@ die(cores("g1")."
 COMMAND: ".cores("b")."--search".cores("g1")." ~ Simple search
          Example: {$script} ".cores("b")."--search ".cores("g1")."\"name to search\"
               Or: {$script} ".cores("b")."-s ".cores("g1")."\"name to serch\"
-
-COMMAND: ".cores("b")."--search-list".cores("g1")." ~ Defines a file that will contain the words to be searched. 
-A word should be below another, thus:
-Word
-Other word
-...
-         Example: {$script} ".cores("b")."--search-list ".cores("g1")."\"file.txt\"
 
 COMMAND: ".cores("b")."--help".cores("g1")." ~ For view HELP
          Example: {$script} ".cores("b")."--help".cores("g1")."
@@ -133,6 +127,10 @@ COMMAND: ".cores("b")."--set-db".cores("g1")." ~ Select which databases will be 
          Example: {$script} ".cores("b")."--set-db".cores("g1")." 1
                   {$script} ".cores("b")."--set-db".cores("g1")." 3,4,2
               Or: {$script} ".cores("b")."-d".cores("g1")." 4,1
+			  
+COMMAND: ".cores("b")."--author".cores("g1")." ~ Search for exploits writed by the \"Author\" seted.
+         Example: {$script} ".cores("b")."--author".cores("g1")." CoderPirata
+          ".cores("p")."* IntelligentExploit does not support this type of search.".cores("g1")."
 				
 COMMAND: ".cores("b")."--save".cores("g1")." ~ Save the exploits found by the tool.
          Example: {$script} ".cores("b")."--save".cores("g1")."
@@ -169,7 +167,7 @@ die(cores("g1")."
 \t\t'       `'`-'  `-' `--`-`-' 
 
 ".cores("g2").".-----------------------------------------------------------------------------.
-[ ".cores("g1")."XPL SEARCH 0.4".cores("g2")." ]------------------------------------------------------------'".cores("g1")."
+[ ".cores("g1")."XPL SEARCH 0.5".cores("g2")." ]------------------------------------------------------------'".cores("g1")."
 ".cores("b")."--".cores("g1")." This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in 5 database:
 ".cores("b")."*".cores("g1")." Exploit-DB
 ".cores("b")."*".cores("g1")." MIlw0rm
@@ -201,40 +199,36 @@ Github            ".cores("b")."https://github.com/coderpirata/".cores("g2")."
 
 function cores($nome){
 $cores = array("r"     => "\033[1;31m", "g"   => "\033[0;32m", "b"    => "\033[1;34m",
-               "g2"   => "\033[1;30m", "g1"    => "\033[0;37m");
+               "g2"   => "\033[1;30m", "g1"    => "\033[0;37m", "p" => "\033[0;35m");
 if(substr(strtolower(PHP_OS), 0, 3) != "win"){ return $cores[strtolower($nome)]; }
 }
 
 function ccdbs($OPT){
 $ids = array(0,1,2,3,4,5);
-foreach($ids as $idz){ 
-foreach($OPT["db"] as $id){
- if(!preg_match("/{$idz}/i", $id)){$o=$o+1;} 
+foreach($ids as $idz){
+ foreach($OPT["db"] as $id){ if(!preg_match("/{$idz}/i", $id)){$o=$o+1;} }
 }
-}
-if($o==6){$OPT["db"]= array("0");}
+if($o==6){$OPT["db"] = 0;}
 return $OPT;
 }
 
 function infos($OPT){
 if(!empty($OPT["proxy"])){$proxyR = "\n| ".cores("g1")."PROXY - ".cores("b").$OPT["proxy"];}
 if(!empty($OPT["time"])){$timeL  = cores("b").$OPT["time"].cores("g1")." sec"; }else{ $timeL = cores("b")."INDEFINITE"; }
-if(isset($OPT["sfile"])){ $OPT["find"]=cores("b").$OPT["sfile"].cores("g1")." is a list!";  }
+if(isset($OPT["sfile"])){ $OPT["find"]=cores("b").$OPT["sfile"]." is a list!".cores("g2");  }
+if(isset($OPT["author"])){ $OPT["find"]="AUTHOR ".cores("b").$OPT["author"].cores("g2"); }
 
 if($OPT["save"]==1){
 $save_xpl = cores("b")."YES".cores("g2")."\n| ".cores("g1")."SAVE IN ".cores("b");
  if(isset($OPT["save-dir"]) and !empty($OPT["save-dir"])){
  $save_xpl .= cores("b")."\"{$OPT["save-dir"]}\"".cores("g2");
-   if(!is_dir($OPT["save-dir"])){ 
-    $save_xpl .= " [".cores("r")."ERROR WITH DIR ".cores("g2")."-".cores("b")." CURRENT DIR WILL BE USED!".cores("g2")."]";   
-   }else{
-	$save_xpl .=" [".cores("g")."DIR OK".cores("g2")."]";   
-   }
- }else{
-  $save_xpl .= cores("b")."CURRENT DIR".cores("g2");
- }
+  if(!is_dir($OPT["save-dir"])){ 
+   $save_xpl .= " [".cores("r")."ERROR WITH DIR ".cores("g2")."-".cores("b")." CURRENT DIR WILL BE USED!".cores("g2")."]";   
+  }else{ $save_xpl .=" [".cores("g")."DIR OK".cores("g2")."]"; }
+ }else{ $save_xpl .= cores("b")."CURRENT DIR".cores("g2"); }
 }else{ $save_xpl = cores("b")."NOT".cores("g2"); }
 
+# DBS TO USE
 foreach($OPT["db"] as $id){
  if($id == 0){ $setdb = cores("g2")."[ ".cores("b")."ALL".cores("g2")." ] "; }
  if(preg_match("/1/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."EXPLOIT-DB".cores("g2")." ] "; }
@@ -244,13 +238,15 @@ foreach($OPT["db"] as $id){
  if(preg_match("/5/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."IEDB".cores("g2")." ] "; }
 }
 
+$l=cores("g1")."|".cores("g2");
 return cores("g2").".-[ ".cores("g1")."Infos".cores("g2")." ]-------------------------------------------------------------------.
-| ".cores("g1")."SEARCH FOR  ".cores("b")."{$OPT["find"]}".cores("g2")."{$proxyR}
+| ".cores("g1")."SEARCH FOR ".cores("b")."{$OPT["find"]}".cores("g2")."{$proxyR}
 | ".cores("g1")."TIME LIMIT FOR DBS RESPOND: {$timeL}".cores("g2")."
 | ".cores("g1")."SAVE EXPLOIT's: {$save_xpl}
 | ".cores("g1")."DATABASES TO SEARCH: {$setdb}
 '-----------------------------------------------------------------------------'
-'[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]-[:|:]'\n\n";
+| ".cores("p")."* Only text files are listed!".cores("g2")."                                               |
+'[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]'\n\n";
 }
 
 function update($OPT){
@@ -440,7 +436,11 @@ echo "\n".cores("g2")."[ ".cores("g1")."MILW00RM.org ".cores("g2")."]:: ";
 $resultado=NULL;
 $save=array();
 $info = array('search' => $OPT["find"], 'Submit' => 'Submit');
+if(isset($OPT["author"])){
+$browser = array("url" => "http://milw00rm.org/author.php?name=".$OPT["author"], "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+}else{
 $browser = array("url" => "http://milw00rm.org/search.php", "proxy" => $OPT["proxy"], "post" => $info, "time" => $OPT["time"]);
+}
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
@@ -473,8 +473,11 @@ echo "\n".cores("g2")."[ ".cores("g1")."PACKETSTORMSECURITY.com ".cores("g2")."]
 $resultado=NULL;
 $id_pages=2;
 $id_info=0;
-
-$browser = array("url" => "https://packetstormsecurity.com/search/?q={$OPT["find"]}", "proxy" => $OPT["proxy"], "time" => $OPT["time"], "post" => "");
+if(isset($OPT["author"])){
+$browser = array("url" => "https://packetstormsecurity.com/search/authors/?q={$OPT["author"]}", "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+}else{
+$browser = array("url" => "https://packetstormsecurity.com/search/?q={$OPT["find"]}", "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+}
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
@@ -517,7 +520,11 @@ function iedb($OPT){
 echo "\n".cores("g2")."[ ".cores("g1")."IEDB.ir ".cores("g2")."]:: ";	
 $resultado=NULL;
 $info = array('search' => $OPT["find"], 'Submit' => 'Submit');
+if(isset($OPT["author"])){
+$browser = array("url" => "http://iedb.ir/author-{$OPT["author"]}.html", "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+}else{
 $browser = array("url" => "http://iedb.ir/search.php", "proxy" => $OPT["proxy"], "post" => $info, "time" => $OPT["time"]);
+}
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
@@ -548,7 +555,8 @@ saida:
 function intelligentexploit($OPT){
 echo "\n".cores("g2")."[ ".cores("g1")."INTELLIGENTEXPLOIT.com ".cores("g2")."]:: ";
 $resultado=NULL;
-$browser = array("url" => "http://www.intelligentexploit.com/api/search-exploit?name=".$OPT["find"], "proxy" => $OPT["proxy"], "post" => "", "time" => $OPT["time"]);
+if(isset($OPT["author"])){ echo cores("r")."This db does not support this type of search.\n"; goto saida; }
+$browser = array("url" => "http://www.intelligentexploit.com/api/search-exploit?name=".$OPT["find"], "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
@@ -585,7 +593,12 @@ echo "\n".cores("g2")."[ ".cores("g1")."EXPLOIT-DB.com ".cores("g2")."]:: ";
 $resultado=NULL;
 $id_pages=2;
 
+if(isset($OPT["author"])){
+$browser = array("url" => "https://www.exploit-db.com/search/?action=search&e_author=+".$OPT["author"], "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+}else{
 $browser = array("url" => "https://www.exploit-db.com/search/?action=search&description={$OPT["find"]}&text=&cve=&e_author=&platform=0&type=0&lang_id=0&port=&osvdb=", "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+}
+
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
@@ -626,7 +639,7 @@ saida:
 ####################################################################################################
 ## CONFIGS
 $OPT = array();
-$OPT["db"] = 0;
+$OPT["db"] = array(0);
 if(!isset($oo["banner-no"]))echo banner();
 if(isset($oo["h"]) or isset($oo["help"]))echo help();
 if(isset($oo["a"]) or isset($oo["about"]))echo about();
@@ -640,10 +653,11 @@ if(isset($oo["update"])){echo update($OPT);}
 if(isset($oo["save"])){$OPT["save"] = 1;}
 if(isset($oo["save-dir"])){$OPT["save-dir"] = $oo["save-dir"];}
 if(isset($oo["save-log"])){$OPT["save-log"] = 1;}
-if(isset($oo["set-db"])){ $OPT["db"] = explode(",", $oo["set-db"]);}
+if(isset($oo["set-db"])){ $OPT["db"]=""; $OPT["db"] = explode(",", $oo["set-db"]);}
 if(isset($oo["d"])){$OPT["db"] = $oo["d"];}
-if(isset($oo["search-list"])){if(!file_exists($oo["search-list"])){ die(cores("r")."\nFILE \"{$oo["search-list"]}\" does not exist!\n"); }else{$OPT["sfile"]=$oo["search-list"];$O=$O+1;}}
-if($O==2)die();
+if(isset($oo["search-list"])){if(!file_exists($oo["search-list"])){ die(cores("r")."\nFILE \"{$oo["search-list"]}\" does not exist!\n"); }else{$OPT["sfile"]=$oo["search-list"];}}else{$O=$O+1;}
+if(isset($oo["author"])){$OPT["author"]=$oo["author"];}else{$O=$O+1;}
+if($O==4)die();
 
 ####################################################################################################
 ## VERIFY SET-DB
@@ -659,7 +673,10 @@ if(file_exists($OPT["sfile"])){
 $file = file_get_contents($OPT["sfile"]);
 if(empty($file)){ die(cores("r")."File \"{$OPT["sfile"]}\" are empty!"); } 
 $file = explode("\n", $file);
-}else{ $file = array($OPT["find"]); }
+}else{ 
+$file = array($OPT["find"]); 
+if(isset($OPT["author"])){$file = array($OPT["author"]);}
+}
 
 ####################################################################################################
 ## STARTING THE SEARCH

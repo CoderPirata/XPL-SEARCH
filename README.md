@@ -43,26 +43,29 @@ Github            https://github.com/CoderPirata/
 - Started.
 
 0.2 - [12/07/2015]
-- Add Exploit-DB.
-- Add Colors, only for linux!
-- Add Update Function.
+- Added Exploit-DB.
+- Added Colors, only for linux!
+- Added Update Function.
 - "Generator" of User-Agent reworked.
 - Small errors and adaptations.
 
 0.3 - [22/07/2015]
 - Bugs solved.
-- Add "save" Function.
-- Add "set-db" function.
+- Added "save" Function.
+- Added "set-db" function.
 
 0.4 - [05/08/2015]
 - Save function modified.
-- Add Scan with list.
+- Added Scan with list.
+
+0.5 - [29/08/2015]
+- Added search by Author
 ```
 
 Screenshot
 ----
 ![images](http://2.bp.blogspot.com/-_zxNoFeLuHk/VcLdwG4g8dI/AAAAAAAAAJM/VXmDTolozeU/s640/banner_xpl-search.png)
 ![images](http://3.bp.blogspot.com/-CxthKPMjNG0/VcLd0XmFavI/AAAAAAAAAJU/Wq8B36XqGe0/s640/xpl-search_search.png)
-![images](http://3.bp.blogspot.com/-NSSG62oae_A/VaHi2IBYyDI/AAAAAAAAAFA/LHXgo5BWnBo/s1600/revslider-search.png)
+![images](http://1.bp.blogspot.com/-P9K9fJ6k53o/VeJcozOiH2I/AAAAAAAAAJ4/iN5EwcdwIUM/s1600/exec.png)
 
 If you find any bug or want to make any suggestions, please contact me by email.

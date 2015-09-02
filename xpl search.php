@@ -208,7 +208,7 @@ $ids = array(0,1,2,3,4,5);
 foreach($ids as $idz){
  foreach($OPT["db"] as $id){ if(!preg_match("/{$idz}/i", $id)){$o=$o+1;} }
 }
-if($o==6){$OPT["db"] = 0;}
+if($o==6){$OPT["db"] = 0; }
 return $OPT;
 }
 

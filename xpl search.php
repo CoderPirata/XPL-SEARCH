@@ -53,7 +53,7 @@ Github            https://github.com/coderpirata/
 - Save function modified
 - Added search with list
 
-0.5 - [18/08/2015]
+0.5 - [30/08/2015]
 - Added search by Author
 
 

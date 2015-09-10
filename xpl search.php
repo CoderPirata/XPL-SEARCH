@@ -4,7 +4,7 @@
 Official repository - https://github.com/CoderPirata/XPL-SEARCH/
 
 -------------------------------------------------------------------------------
-[ XPL SEARCH 0.5 ]-------------------------------------------------------------
+[ XPL SEARCH 0.6 ]-------------------------------------------------------------
 -This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in five database:
 * Exploit-DB
 * MIlw0rm
@@ -24,9 +24,10 @@ Permission        Writing/Reading
 
 -------------------------------------------------------------------------------
 [ ABOUT DEVELOPER ]------------------------------------------------------------
-NAME              CoderPirata
+NAME              CoderPIRATA
+Email             coderpirata@gmail.com
 Blog              http://coderpirata.blogspot.com.br/
-Twitter           https://twitter.com/coderpirata
+Twitter           https://twitter.com/CoderPIRATA
 Google+           https://plus.google.com/103146866540699363823
 Pastebin          http://pastebin.com/u/CoderPirata
 Github            https://github.com/coderpirata/
@@ -46,15 +47,21 @@ Github            https://github.com/coderpirata/
 
 0.3 - [22/07/2015]
 - Bugs solved
-- Added "save" Function
-- Added "set-db" function
+- Added "save" Function.
+- Added "set-db" function.
 
 0.4 - [05/08/2015]
-- Save function modified
-- Added search with list
+- Save function modified.
+- Added search with list.
 
-0.5 - [30/08/2015]
-- Added search by Author
+0.5 - [29/08/2015]
+- Added search by Author.
+- Added View Author and date of exploits.
+
+0.6 - [09/09/2015]
+- Changes in search logs.
+- Now displays the author of the exploit.
+ * Does not work with IntelligentExploit.
 
 
 If you find any bug or want to make any suggestions, please contact me by email.
@@ -79,7 +86,7 @@ return cores("g1")."
 \t \ / |   )|       (   )|       / \   |   ):    |   |
 \t  /  |--' |        `-. |---   /___\  |--' |    |---|
 \t / \ |    |       (   )|     /     \ |  \ :    |   |
-\t'   ''    '---'    `-' '---''       `'   ` `--''   '".cores("r")." 0.5
+\t'   ''    '---'    `-' '---''       `'   ` `--''   '".cores("r")." 0.6
 ".cores("g2")."------------------------------------------------------------------------------~".cores("g1")."
 {$cr}
 HELP: {$_SERVER["SCRIPT_NAME"]} ".cores("b")."--help".cores("g1")."
@@ -167,7 +174,7 @@ die(cores("g1")."
 \t\t'       `'`-'  `-' `--`-`-' 
 
 ".cores("g2").".-----------------------------------------------------------------------------.
-[ ".cores("g1")."XPL SEARCH 0.5".cores("g2")." ]------------------------------------------------------------'".cores("g1")."
+[ ".cores("g1")."XPL SEARCH 0.6".cores("g2")." ]------------------------------------------------------------'".cores("g1")."
 ".cores("b")."--".cores("g1")." This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits in 5 database:
 ".cores("b")."*".cores("g1")." Exploit-DB
 ".cores("b")."*".cores("g1")." MIlw0rm
@@ -208,13 +215,16 @@ $ids = array(0,1,2,3,4,5);
 foreach($ids as $idz){
  foreach($OPT["db"] as $id){ if(!preg_match("/{$idz}/i", $id)){$o=$o+1;} }
 }
-if($o==6){$OPT["db"] = 0; }
+if($o==6){$OPT["db"] = 0;}
 return $OPT;
 }
 
 function infos($OPT){
+
 if(!empty($OPT["proxy"])){$proxyR = "\n| ".cores("g1")."PROXY - ".cores("b").$OPT["proxy"];}
+
 if(!empty($OPT["time"])){$timeL  = cores("b").$OPT["time"].cores("g1")." sec"; }else{ $timeL = cores("b")."INDEFINITE"; }
+
 if(isset($OPT["sfile"])){ $OPT["find"]=cores("b").$OPT["sfile"]." is a list!".cores("g2");  }
 if(isset($OPT["author"])){ $OPT["find"]="AUTHOR ".cores("b").$OPT["author"].cores("g2"); }
 
@@ -228,7 +238,6 @@ $save_xpl = cores("b")."YES".cores("g2")."\n| ".cores("g1")."SAVE IN ".cores("b"
  }else{ $save_xpl .= cores("b")."CURRENT DIR".cores("g2"); }
 }else{ $save_xpl = cores("b")."NOT".cores("g2"); }
 
-# DBS TO USE
 foreach($OPT["db"] as $id){
  if($id == 0){ $setdb = cores("g2")."[ ".cores("b")."ALL".cores("g2")." ] "; }
  if(preg_match("/1/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."EXPLOIT-DB".cores("g2")." ] "; }
@@ -238,14 +247,15 @@ foreach($OPT["db"] as $id){
  if(preg_match("/5/i", $id)){ $setdb .= cores("g2")."[ ".cores("b")."IEDB".cores("g2")." ] "; }
 }
 
+if(isset($OPT["save"])){ $info_save = "\n| ".cores("p")."* Only text files will be saved!".cores("g2")."                                            |"; }
+
 $l=cores("g1")."|".cores("g2");
 return cores("g2").".-[ ".cores("g1")."Infos".cores("g2")." ]-------------------------------------------------------------------.
 | ".cores("g1")."SEARCH FOR ".cores("b")."{$OPT["find"]}".cores("g2")."{$proxyR}
 | ".cores("g1")."TIME LIMIT FOR DBS RESPOND: {$timeL}".cores("g2")."
 | ".cores("g1")."SAVE EXPLOIT's: {$save_xpl}
 | ".cores("g1")."DATABASES TO SEARCH: {$setdb}
-'-----------------------------------------------------------------------------'
-| ".cores("p")."* Only text files are listed!".cores("g2")."                                               |
+'-----------------------------------------------------------------------------'{$info_save}
 '[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]-[:{$l}:]'\n\n";
 }
 
@@ -270,7 +280,6 @@ if(preg_match("/milw00rm.org/i", $save["url"])){
 $resultado = browser($save);
 preg_match_all('/pre>(.+)<\/pre/s', htmlspecialchars_decode($resultado["file"]), $xpl);
 $save["xpl"] = $xpl[1];
-$save["dbs"] = "milw00rm";
 if(!preg_match("/# milw00rm.org/i", $save["xpl"])){$ok=$ok+1;}
 }
 
@@ -278,7 +287,6 @@ if(preg_match("/iedb.ir/i", $save["url"])){
 $resultado = browser($save);
 preg_match_all('/pre>(.+)<\/pre/s', htmlspecialchars_decode($resultado["file"]), $xpl);
 $save["xpl"] = $xpl[1];
-$save["dbs"] = "iedb";
 if(!preg_match("/# Iranian Exploit DataBase =/i", $save["xpl"])){$ok=$ok+1;} 
 }
 
@@ -290,7 +298,6 @@ $xpl = str_replace("<code>", "", $xpl);
 $xpl = str_replace("</code>", "", $xpl);
 $xpl = str_replace("&#27;", "", $xpl);
 $save["xpl"] = html_entity_decode($xpl, ENT_QUOTES);
-$save["dbs"] = "packetstormsecurity";
 if(empty($save["xpl"])){$ok=$ok+1;}
 }
 
@@ -300,16 +307,17 @@ preg_match_all('/<\/HEAD><BODY>(.+)<\/BODY>/s', htmlspecialchars_decode($resulta
 preg_match_all('/<script type="text\/javascript">(.+)<\/script>/s', $xpl[1][0], $xpl_l);
 $save["xpl"] = trim(str_replace($xpl_l[0][0], "", $xpl[1][0]));
 $save["xpl"] = trim(str_replace("&#039;", "'", $save["xpl"]));
-$save["dbs"] = "intelligentexploit";
 if(preg_match("/<\/HEAD><BODY>/i", htmlspecialchars_decode($resultado["file"]))){$ok=$ok+1;} 
 }
 
 if(preg_match("/exploit-db.com/i", $save["url"])){ 
 preg_match_all('#/exploits/(.*?)/#', $save["url"], $xpl_link);
+if(empty($xpl_link[1][0])){
+preg_match_all('#/papers/(.*?)/#', $save["url"], $xpl_link);
+}
 $save["url"] = "https://www.exploit-db.com/download/".$xpl_link[1][0];
 $resultado = browser($save);
 $save["xpl"] = $resultado["file"];
-$save["dbs"] = "exploit-db";
 if(preg_match("/<div class=\"w-copyright\">© Copyright 2015 Exploit Database<\/div>/i", $save["xpl"])){$ok=$ok+1;} 
 }
 
@@ -337,7 +345,7 @@ function save_log($OPT){
 $ds = DIRECTORY_SEPARATOR;
 $n = PHP_EOL;
 mkdir("logs".$ds);
-file_put_contents("logs".$ds."search_log.txt", "TITLE: ".$OPT["title"].$n."LINK: ".$OPT["url"].$n.$n, FILE_APPEND);
+file_put_contents("logs".$ds."search_log.txt", "DATABASE: ".$OPT["dbs"].$n."AUTHOR: ".$OPT["author"].$n."TITLE: ".$OPT["title"].$n."LINK: ".$OPT["url"].$n.$n, FILE_APPEND);
 }
 
 function browser($browser){
@@ -437,7 +445,7 @@ $resultado=NULL;
 $save=array();
 $info = array('search' => $OPT["find"], 'Submit' => 'Submit');
 if(isset($OPT["author"])){
-$browser = array("url" => "http://milw00rm.org/author.php?name=".$OPT["author"], "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+$browser = array("url" => "http://milw00rm.org/author.php?name=".urlencode($OPT["author"]), "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 }else{
 $browser = array("url" => "http://milw00rm.org/search.php", "proxy" => $OPT["proxy"], "post" => $info, "time" => $OPT["time"]);
 }
@@ -452,15 +460,27 @@ if(!preg_match('/<td class="style1">-::DATE<\/td>/i', $resultado["file"]) or emp
 echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
 echo cores("g")."FOUND".cores("g2")."\n.-----------------------------------------------------------------------------.\n|\n".cores("g1")."";
-preg_match_all('#<a href="(.*?)" target="_blank" class="style1">(.*?)</a>#', $resultado["file"], $a);
-foreach($a[0] as $v){ 
+preg_match_all('#<a href="(.*?)" target="_blank" class="style1">(.*?)</a></td>
+		<td nowrap="nowrap" width=40 align="left">.*</td>
+		<td nowrap="nowrap" width="9" valign="middle" align="center">.*</td>
+		<td nowrap="nowrap" width="9" valign="middle" align="center"></td>
+		<td nowrap="nowrap" width="135"><a href=".*">(.*?)</a></td>#', $resultado["file"], $a);		
+foreach($a[0] as $v){
+preg_match_all('#<td nowrap="nowrap" width="135"><a href="(.*?)">(.*?)</a></td>#', $v, $author);
 $var = str_replace('<a href="', cores("g1")."http://milw00rm.org/", $v);
 $var = str_replace('" target="_blank" class="style1">', "\n", $var);
 $var = str_replace("</a>", "", $var);
+$var = str_replace("</td>", "", $var);
 $fim = explode("\n", $var);
-echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b").htmlspecialchars_decode($fim[1])."\n".cores("g2")."| ".cores("g1")."LINK:: ".cores("b").$fim[0]."\n".cores("g2");
-$save["title"] = htmlspecialchars_decode($fim[1]); $save["url"] = $fim[0]; $save = array_merge($OPT, $save);
-if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+echo cores("g2")."| ".cores("g1")."AUTHOR:: ".$author[2][0]."\n".cores("g2")."| ".cores("g1")."TITLE:: ".cores("b").htmlspecialchars_decode($fim[1])."\n".cores("g2")."| ".cores("g1")."LINK:: ".cores("b").$fim[0]."\n".cores("g2");
+if($OPT["save"]==1){
+$save["author"] = $author[2][0];
+$save["title"] = htmlspecialchars_decode($fim[1]); 
+$save["url"] = $fim[0]; 
+$save["dbs"]="MILW00RM";
+$save = array_merge($OPT, $save);
+echo save($save);
+}else{ echo "|\n"; }
 if($OPT["save-log"]==1){echo save_log($save);}
 }
 echo cores("g2")."'-----------------------------------------------------------------------------'\n";
@@ -472,11 +492,10 @@ function packetstormsecurity($OPT){
 echo "\n".cores("g2")."[ ".cores("g1")."PACKETSTORMSECURITY.com ".cores("g2")."]:: ";
 $resultado=NULL;
 $id_pages=2;
-$id_info=0;
 if(isset($OPT["author"])){
-$browser = array("url" => "https://packetstormsecurity.com/search/authors/?q={$OPT["author"]}", "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+$browser = array("url" => "https://packetstormsecurity.com/search/authors/?q=".urlencode($OPT["author"]), "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 }else{
-$browser = array("url" => "https://packetstormsecurity.com/search/?q={$OPT["find"]}", "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+$browser = array("url" => "https://packetstormsecurity.com/search/?q=".urlencode($OPT["find"]), "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 }
 $resultado = browser($browser);
 
@@ -489,17 +508,27 @@ if(preg_match('/<title>No Results Found/i', $resultado["file"]) or empty($result
 echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
 echo cores("g")."FOUND\n".cores("g2").".-----------------------------------------------------------------------------.\n|\n";
-while($id_pages < 100){	
-preg_match_all('#<a class="ico text-plain" href="(.*?)" title="(.*?)">(.*?)<\/a>#', $resultado["file"], $a);
 
-while($id_info < count($a[0])){ 
-echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b")."".htmlspecialchars_decode($a[3][$id_info])."\n";
-preg_match_all('#/files/(.*?)/#', $a[1][$id_info], $ab);
-echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."https://packetstormsecurity.com/files/{$ab[1][0]}/\n".cores("g2");
-$save["title"] = htmlspecialchars_decode($a[3][$id_info]); $save["url"] = "https://packetstormsecurity.com/files/{$ab[1][0]}/"; $save = array_merge($OPT, $save);
-if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+while($id_pages < 100){	
+preg_match_all('/<dl id="(.*?)" class="(.*?)">(.*?)<\/dl>/s', $resultado["file"], $a);
+foreach($a[3] as $source){
+preg_match_all('#<a class="ico .*" href="(.*?)" title="(.*?)">(.*?)<\/a>#', $source, $nmlk);
+preg_match_all('#<dd class="refer">Authored by <a href="(.*?)" class="(.*?)">(.*?)<\/a>#', $source, $author);
+
+echo cores("g2")."| ".cores("g1")."AUTHOR:: ".$author[3][0]."\n";
+echo cores("g2")."| ".cores("g1")."TITLE:: ".cores("b").htmlspecialchars_decode($nmlk[3][0])."\n";
+preg_match_all('#/files/(.*?)/#', $nmlk[1][0], $ab);
+$link = "https://packetstormsecurity.com/files/{$ab[1][0]}/";
+echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b").$link."\n".cores("g2");
+if($OPT["save"]==1){
+$save["author"] = $author[3][0];
+$save["title"] = htmlspecialchars_decode($nmlk[3][0]);
+$save["url"] = $link; 
+$save["dbs"]="PACKETSTORMSECURITY";
+$save = array_merge($OPT, $save);
+echo save($save);}else{ echo "|\n"; }
 if($OPT["save-log"]==1){echo save_log($save);}
-$id_info++;
+
 }
 
 if(preg_match('/accesskey="]">Next<\/a>/i', $resultado["file"])){
@@ -536,17 +565,23 @@ if(!preg_match('/<td class="style1">-::DATE<\/td>/i', $resultado["file"]) or emp
 echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
 echo cores("g")."FOUND\n".cores("g2").".-----------------------------------------------------------------------------.\n|\n";
-preg_match_all('#<a href="(.*?)" target="_blank" class="style1">(.*?)</a>#', $resultado["file"], $a);
-foreach($a[0] as $v){ 
-$var = str_replace('<a href="', cores("g1")."http://iedb.ir/", $v);
-$var = str_replace('" target="_blank" class="style1">', "\n", $var);
-$var = str_replace("</a>", "", $var);
-$fim = explode("\n", $var);
-echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b").htmlspecialchars_decode($fim[1])."\n".cores("g2")."| ".cores("g1")."LINK:: ".cores("b").$fim[0]."\n".cores("g2");
-$save["title"] = htmlspecialchars_decode($fim[1]); $save["url"] = $fim[0]; $save = array_merge($OPT, $save);
-if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+preg_match_all('/<tr class="submit">(.*?)<\/tr>/s', $resultado["file"], $a);
+
+foreach($a[0] as $v){
+preg_match_all('#<td nowrap="nowrap" width="135"><a href="(.*?)">(.*?)</a></td>#', $v, $author);
+preg_match_all('#<a href="(.*?)" target="_blank" class="style1">(.*?)</a>#', $v, $nmlnk);
+echo cores("g2")."| ".cores("g1")."AUTHOR:: ".$author[2][0]."\n".cores("g2")."| ".cores("g1")."TITLE:: ".cores("b").htmlspecialchars_decode($nmlnk[2][0])."\n".cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."http://iedb.ir/".$nmlnk[1][0]."\n".cores("g2");
+if($OPT["save"]==1){
+$save["author"] = $author[2][0];
+$save["title"] = htmlspecialchars_decode($nmlnk[2][0]); 
+$save["url"] = "http://iedb.ir/".$nmlnk[1][0]; 
+$save["dbs"]="IEDB";
+$save = array_merge($OPT, $save);
+echo save($save);
+}else{ echo "|\n"; }
 if($OPT["save-log"]==1){echo save_log($save);}
 }
+
 echo cores("g2")."'-----------------------------------------------------------------------------'\n";
 }
 saida:
@@ -556,7 +591,7 @@ function intelligentexploit($OPT){
 echo "\n".cores("g2")."[ ".cores("g1")."INTELLIGENTEXPLOIT.com ".cores("g2")."]:: ";
 $resultado=NULL;
 if(isset($OPT["author"])){ echo cores("r")."This db does not support this type of search.\n"; goto saida; }
-$browser = array("url" => "http://www.intelligentexploit.com/api/search-exploit?name=".$OPT["find"], "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+$browser = array("url" => "http://www.intelligentexploit.com/api/search-exploit?name=".urlencode($OPT["find"]), "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 $resultado = browser($browser);
 
 if($resultado["http_code"]>307 or $resultado["http_code"]==0){
@@ -572,14 +607,18 @@ preg_match_all('#{"id":"(.*?)","date":"(.*?)","name":"(.*?)"}#', $resultado["fil
 
 $i=0;
 while($i < count($a[0])){
-echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b")."".htmlspecialchars_decode(str_replace("\/", "/", $a[3][$i]))."\n";
+echo cores("g2")."| ".cores("g1")."AUTHOR:: ".cores("r")."Not available\n";
+echo cores("g2")."| ".cores("g1")."TITLE:: ".cores("b")."".htmlspecialchars_decode(str_replace("\/", "/", $a[3][$i]))."\n";
 echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."https://www.intelligentexploit.com/view-details.html?id={$a[1][$i]}\n".cores("g2");
-
+if($OPT["save"]==1){
+$save["author"] = "Not available"; 
 $save["title"] = htmlspecialchars_decode(str_replace("\/", "/", $a[3][$i])); 
 $save["url"] = "https://www.intelligentexploit.com/view-details.html?id={$a[1][$i]}"; 
+$save["dbs"]="INTELLIGENTEXPLOIT";
 $save = array_merge($OPT, $save);
-if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
-if($OPT["save-log"]==1){echo save_log($save);}
+echo save($save);
+}else{ echo "|\n"; }
+if($OPT["save-log"]==1){ echo save_log($save);}
 
 $i++;
 }
@@ -594,9 +633,9 @@ $resultado=NULL;
 $id_pages=2;
 
 if(isset($OPT["author"])){
-$browser = array("url" => "https://www.exploit-db.com/search/?action=search&e_author=+".$OPT["author"], "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+$browser = array("url" => "https://www.exploit-db.com/search/?action=search&e_author=+".urlencode($OPT["author"]), "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 }else{
-$browser = array("url" => "https://www.exploit-db.com/search/?action=search&description={$OPT["find"]}&text=&cve=&e_author=&platform=0&type=0&lang_id=0&port=&osvdb=", "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+$browser = array("url" => "https://www.exploit-db.com/search/?action=search&description=".urlencode($OPT["find"])."&text=&cve=&e_author=&platform=0&type=0&lang_id=0&port=&osvdb=", "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 }
 
 $resultado = browser($browser);
@@ -612,15 +651,27 @@ echo cores("r")."NOT FOUND\n".cores("g2");
 echo cores("g")."FOUND\n".cores("g2")."+-----------------------------------------------------------------------------.\n|\n";
 
 while($id_pages < 100){ $id_info=0;
-preg_match_all('#<a href="https://www.exploit-db.com/exploits/(.*?)/">(.*?)</a>#', $resultado["file"], $a, PREG_SET_ORDER);
+preg_match_all('/<td class="date">(.*?)<\/tr>/s', $resultado['file'], $source);
 
-while($id_info < count($a)){ 
-echo cores("g2")."| ".cores("g1")."NAME:: ".cores("b")."".htmlspecialchars_decode($a[$id_info][2])."\n";
-echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."https://www.exploit-db.com/exploits/{$a[$id_info][1]}/".cores("g2")."\n".cores("g2");
-$save["title"] = htmlspecialchars_decode($a[$id_info][2]); $save["url"] = "https://www.exploit-db.com/exploits/{$a[$id_info][1]}/"; $save = array_merge($OPT, $save);
-if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+foreach($source[1] as $source){ $lnk = "exploits";
+preg_match_all('#<a href="https://www.exploit-db.com/exploits/(.*?)/">(.*?)</a>#', $source, $nmlk);
+if(empty($nmlk[2][0]) and empty($nmlk[1][0])){ $lnk = "papers";
+preg_match_all('#<a href="https://www.exploit-db.com/papers/(.*?)/">(.*?)</a>#', $source, $nmlk);
+}
+preg_match_all('#<a href="https://www.exploit-db.com/author/(.*?)" title="(.*?)">#', $source, $author);
+
+echo cores("g2")."| ".cores("g1")."AUTHOR:: ".$author[2][0]."\n";
+echo cores("g2")."| ".cores("g1")."TITLE:: ".cores("b")."".htmlspecialchars_decode($nmlk[2][0])."\n";
+echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."https://www.exploit-db.com/{$lnk}/{$nmlk[1][0]}/".cores("g2")."\n".cores("g2");
+if($OPT["save"]==1){
+$save["author"] = $author[2][0];
+$save["title"] = htmlspecialchars_decode($nmlk[2][0]);
+$save["url"] = "https://www.exploit-db.com/exploits/{$nmlk[1][0]}/"; 	
+$save["dbs"]="EXPLOIT-DB";
+$save = array_merge($OPT, $save);
+echo save($save);}else{ echo "|\n"; }
 if($OPT["save-log"]==1){echo save_log($save);}
-$id_info++;
+$id_info= $id_info+1;
 }
 
 if(preg_match('/>next<\/a>/i', $resultado["file"])){
@@ -658,6 +709,7 @@ if(isset($oo["d"])){$OPT["db"] = $oo["d"];}
 if(isset($oo["search-list"])){if(!file_exists($oo["search-list"])){ die(cores("r")."\nFILE \"{$oo["search-list"]}\" does not exist!\n"); }else{$OPT["sfile"]=$oo["search-list"];}}else{$O=$O+1;}
 if(isset($oo["author"])){$OPT["author"]=$oo["author"];}else{$O=$O+1;}
 if($O==4)die();
+unset($oo);
 
 ####################################################################################################
 ## VERIFY SET-DB

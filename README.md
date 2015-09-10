@@ -59,7 +59,12 @@ Github            https://github.com/CoderPirata/
 - Added Scan with list.
 
 0.5 - [29/08/2015]
-- Added search by Author
+- Added search by Author.
+
+0.6 - [09/09/2015]
+- Now displays the author of the exploit.
+ * Does not work with IntelligentExploit.
+- Changes in search logs.
 ```
 
 Screenshot

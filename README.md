@@ -8,6 +8,7 @@ Search exploits in multiple exploit databases!
  * PacketStormSecurity
  * IntelligentExploit
  * IEDB
+ * CVE
 ```
 
 
@@ -65,6 +66,17 @@ Github            https://github.com/CoderPirata/
 - Now displays the author of the exploit.
  * Does not work with IntelligentExploit.
 - Changes in search logs.
+
+0.7 - [11/09/2015]
+- Added search in CVE.
+ * ID.
+ * Simple search - id 6.
+- Bug in exploit-db search, "papers" fixed.
+- Added standard time of 60 seconds for each request.
+- file_get_contents() was removed from "browser()".
+- Code of milw00rm search has been modified.
+- Changes in search logs.
+- Added date.
 ```
 
 Screenshot

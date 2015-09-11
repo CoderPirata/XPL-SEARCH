@@ -143,7 +143,7 @@ COMMAND: ".cores("b")."--set-db".cores("g1")." ~ Select which databases will be 
            ".cores("b")."3".cores("g1")." - PacketStormSecurity
            ".cores("b")."4".cores("g1")." - IntelligentExploit
            ".cores("b")."5".cores("g1")." - IEDB
-		   ".cores("b")."5".cores("g1")." - CVE
+           ".cores("b")."5".cores("g1")." - CVE
          Example: {$script} ".cores("b")."--set-db".cores("g1")." 1
                   {$script} ".cores("b")."--set-db".cores("g1")." 3,6,2
               Or: {$script} ".cores("b")."-d".cores("g1")." 4,1
@@ -345,12 +345,7 @@ if(preg_match("/cve.mitre.org/i", $save["url"])) {
 $save["xpl"] = $save["description"];
 }else{ $ok=$ok+1; }
 
-if(preg_match("/cwe.mitre.org/i", $save["url"])) {
-$save["xpl"] = $save["description"];
-}else{ $ok=$ok+1; }
-
-
-if($ok!=7 and !empty($save["xpl"])){
+if($ok!=6 and !empty($save["xpl"])){
 $save["title"] = trim(str_replace("/", "-", $save["title"]));
 if(isset($save["save-dir"])){
 $svdr = $save["save-dir"]; 

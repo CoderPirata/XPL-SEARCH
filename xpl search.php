@@ -306,7 +306,7 @@ if(!preg_match("/# milw00rm.org/i", $save["xpl"])){$ok=$ok+1;}
 if(preg_match("/iedb.ir/i", $save["url"])){ 
 $resultado = browser($save);
 preg_match_all('/pre>(.+)<\/pre/s', htmlspecialchars_decode($resultado["file"]), $xpl);
-$save["xpl"] = $xpl[1];
+$save["xpl"]=$xpl[1];
 if(!preg_match("/# Iranian Exploit DataBase =/i", $save["xpl"])){$ok=$ok+1;} 
 }
 

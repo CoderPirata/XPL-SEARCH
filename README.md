@@ -15,7 +15,7 @@ Search exploits in multiple exploit databases!
 TO RUN THE SCRIPT
 ----
 ```
-PHP Version       5.6.8
+PHP Version (cli) 5.5.8
  php5-cli         Lib
 cURL support      Enabled
  php5-curl        Lib

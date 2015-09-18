@@ -75,7 +75,7 @@ Github            https://github.com/coderpirata/
 - Added date.
 
 0.7.1 - [17/09/2015]
-- Bug in milw00rm solved.
+- Bug in milw00rm solved
 
 If you find any bug or want to make any suggestions, please contact me by email.
 */
@@ -99,7 +99,7 @@ return cores("g1")."
 \t \ / |   )|       (   )|       / \   |   ):    |   |
 \t  /  |--' |        `-. |---   /___\  |--' |    |---|
 \t / \ |    |       (   )|     /     \ |  \ :    |   |
-\t'   ''    '---'    `-' '---''       `'   ` `--''   '".cores("r")." 0.7
+\t'   ''    '---'    `-' '---''       `'   ` `--''   '".cores("r")." 0.7.1
 ".cores("g2")."------------------------------------------------------------------------------~".cores("g1")."
 HELP: {$_SERVER["SCRIPT_NAME"]} ".cores("b")."--help".cores("g1")."
 USAGE: {$_SERVER["SCRIPT_NAME"]} ".cores("b")."--search ".cores("g1")."\"name to search\"
@@ -192,7 +192,7 @@ die(cores("g1")."
 \t\t'       `'`-'  `-' `--`-`-' 
 
 ".cores("g2").".-----------------------------------------------------------------------------.
-[ ".cores("g1")."XPL SEARCH 0.7".cores("g2")." ]------------------------------------------------------------'".cores("g1")."
+[ ".cores("g1")."XPL SEARCH 0.7.1".cores("g2")." ]------------------------------------------------------------'".cores("g1")."
 ".cores("b")."--".cores("g1")." This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits/vulnerabilities in six database:
 ".cores("b")."*".cores("g1")." Exploit-DB
 ".cores("b")."*".cores("g1")." MIlw0rm

@@ -63,7 +63,7 @@ Github            https://github.com/coderpirata/
 - Now displays the author of the exploit.
  * Does not work with IntelligentExploit.
 
-0.7 - [00/00/2015]
+0.7 - [11/09/2015]
 - Added search in CVE.
  * ID.
  * Simple search - id 6.
@@ -74,6 +74,8 @@ Github            https://github.com/coderpirata/
 - Changes in search logs.
 - Added date.
 
+0.7.1 - [17/09/2015]
+- Bug in milw00rm solved.
 
 If you find any bug or want to make any suggestions, please contact me by email.
 */
@@ -441,23 +443,21 @@ if(!preg_match('/<td class="style1">-::DATE<\/td>/i', $resultado["file"]) or emp
 echo cores("r")."NOT FOUND\n".cores("g2");
 }else{
 echo cores("g")."FOUND".cores("g2")."\n.-----------------------------------------------------------------------------.\n|\n".cores("g1")."";
-preg_match_all('#<td class="style1" nowrap="nowrap" width="62">(.*?)</td>
-		<td nowrap="nowrap" width="375"><a href="(.*?)" target="_blank" class="style1">(.*?)</a></td>
-		<td nowrap="nowrap" width=40 align="left">.*</td>
-		<td nowrap="nowrap" width="9" valign="middle" align="center">.*</td>
-		<td nowrap="nowrap" width="9" valign="middle" align="center"></td>
-		<td nowrap="nowrap" width="135"><a href=".*">(.*?)</a></td>#', $resultado["file"], $data);		
-$nn = count($data[1]); $nn--; $i=0;
-while($i <= $nn){	
-echo cores("g2")."| ".cores("g1")."AUTHOR:: ".$data[4][$i]."\n";
-echo cores("g2")."| ".cores("g1")."DATE:: ".$data[1][$i]."\n";
-echo cores("g2")."| ".cores("g1")."TITLE:: ".cores("b").htmlspecialchars_decode($data[3][$i])."\n";
-echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."http://milw00rm.org/".$data[2][$i]."\n".cores("g2");
+preg_match_all('#<td class="style1" nowrap="nowrap" width="62">(.*?)</td>#', $resultado["file"], $date);		
+preg_match_all('#<td nowrap="nowrap" width="135"><a href="(.*?)">(.*?)</a></td>#', $resultado["file"], $author);
+preg_match_all('#<a href="(.*?)" target="_blank" class="style1">(.*?)</a>#', $resultado["file"], $title_link);
 
-$save["author"] = $data[4][$i];
-$save["title"] = htmlspecialchars_decode($data[3][$i]); 
-$save["url"] = "http://milw00rm.org/".$data[2][$i];
-$save["date"] = $data[1][$i];
+$nn = count($date[0]); $nn--; $i=0;
+while($i <= $nn){	
+echo cores("g2")."| ".cores("g1")."AUTHOR:: ".$author[2][$i]."\n";
+echo cores("g2")."| ".cores("g1")."DATE:: ".$date[1][$i]."\n";
+echo cores("g2")."| ".cores("g1")."TITLE:: ".cores("b").htmlspecialchars_decode($title_link[2][$i])."\n";
+echo cores("g2")."| ".cores("g1")."LINK:: ".cores("b")."http://milw00rm.org/".$title_link[1][$i]."\n".cores("g2");
+
+$save["author"] = $author[2][$i];
+$save["title"] = htmlspecialchars_decode($title_link[2][$i]); 
+$save["url"] = "http://milw00rm.org/".$title_link[1][$i];
+$save["date"] = $date[1][$i];
 $save["dbs"]="MILW00RM";
 if($OPT["save"]==1){ echo save($save); }else{ echo "|\n"; }
 if($OPT["save-log"]==1){echo save_log($save);}

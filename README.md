@@ -77,6 +77,9 @@ Github            https://github.com/CoderPirata/
 - Code of milw00rm search has been modified.
 - Changes in search logs.
 - Added date.
+
+0.7.1 - [17/09/2015]
+- Bug in milw00rm solved
 ```
 
 Screenshot

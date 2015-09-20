@@ -15,13 +15,13 @@ Search exploits in multiple exploit databases!
 TO RUN THE SCRIPT
 ----
 ```
-PHP Version (cli) 5.5.8
+PHP Version (cli) 5.5.8 or higher
  php5-cli         Lib
 cURL support      Enabled
  php5-curl        Lib
-cURL Version      7.40.0
+cURL Version      7.40.0 or higher
 allow_url_fopen   On
-Permission        Writing/Reading
+Permission        Writing & Reading
 ```
 
 

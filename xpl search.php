@@ -145,7 +145,7 @@ COMMAND: ".cores("b")."--set-db".cores("g1")." ~ Select which databases will be 
            ".cores("b")."3".cores("g1")." - PacketStormSecurity
            ".cores("b")."4".cores("g1")." - IntelligentExploit
            ".cores("b")."5".cores("g1")." - IEDB
-           ".cores("b")."5".cores("g1")." - CVE
+           ".cores("b")."6".cores("g1")." - CVE
          Example: {$script} ".cores("b")."--set-db".cores("g1")." 1
                   {$script} ".cores("b")."--set-db".cores("g1")." 3,6,2
               Or: {$script} ".cores("b")."-d".cores("g1")." 4,1

@@ -28,13 +28,14 @@ Permission        Writing & Reading
 ABOUT DEVELOPER
 ----
 ```
-Author            CoderPirata
+Author_Nick       CoderPIRATA
+Author_Name       Eduardo
 Email             coderpirata@gmail.com
 Blog              http://coderpirata.blogspot.com.br/
 Twitter           https://twitter.com/coderpirata
 Google+           https://plus.google.com/103146866540699363823
 Pastebin          http://pastebin.com/u/CoderPirata
-Github            https://github.com/CoderPirata/
+Github            https://github.com/coderpirata/
 ```
 
 "CHANGELOG"
@@ -80,6 +81,14 @@ Github            https://github.com/CoderPirata/
 
 0.7.1 - [17/09/2015]
 - Bug in milw00rm solved
+
+0.8 - [00/00/2015]
+- Added shebang.
+- Commands "save", "save-log" and "save-dir" have been modified.
+- Added "no-db" option.
+- GETOPT() modified - Thanks Jack2.
+- Bug on save-dir solved.
+- Others minor bugs solved.
 ```
 
 Screenshot

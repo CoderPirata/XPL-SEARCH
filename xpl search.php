@@ -81,7 +81,7 @@ Github            https://github.com/coderpirata/
 0.7.1 - [17/09/2015]
 - Bug in milw00rm solved.
 
-0.8 - [00/00/2015]
+0.8 - [05/10/2015]
 - Added shebang.
 - Commands "save", "save-log" and "save-dir" have been modified.
 - Added "no-db" option.

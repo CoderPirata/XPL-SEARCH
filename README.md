@@ -89,6 +89,13 @@ Github            https://github.com/coderpirata/
 - GETOPT() modified - Thanks Jack2.
 - Bug on save-dir solved.
 - Others minor bugs solved.
+
+0.9 - [19/11/2015]
+- Added Siph0n database - ID 7.
+- Update reworked.
+- Comment in script updated.
+- Adjustment in translation on "help page" - Thanks j3gb0.
+- Milw00rm domain changed.
 ```
 
 Screenshot
@@ -96,5 +103,6 @@ Screenshot
 ![images](http://2.bp.blogspot.com/-_zxNoFeLuHk/VcLdwG4g8dI/AAAAAAAAAJM/VXmDTolozeU/s640/banner_xpl-search.png)
 ![images](http://3.bp.blogspot.com/-CxthKPMjNG0/VcLd0XmFavI/AAAAAAAAAJU/Wq8B36XqGe0/s640/xpl-search_search.png)
 ![images](http://1.bp.blogspot.com/-P9K9fJ6k53o/VeJcozOiH2I/AAAAAAAAAJ4/iN5EwcdwIUM/s1600/exec.png)
+![](http://3.bp.blogspot.com/-SoUb9FnrRvo/Vk4itKD8M8I/AAAAAAAAANA/WWOITDYllCw/s1600/search-siph0n.png)
 
 If you find any bug or want to make any suggestions, please contact me by email.

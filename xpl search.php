@@ -1,24 +1,46 @@
 #!/bin/env php
 <?php
 /*
-
 Official repository - https://github.com/CoderPirata/XPL-SEARCH/
 
+.----------------------------------------------------------------------------------.
+[ XPL SEARCH 0.9 ][ Search exploits/vulnerabilities in multiple databases online.  ]
 
--------------------------------------------------------------------------------
-[ XPL SEARCH 0.8 ]-------------------------------------------------------------
--This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits & vulnerabilities in six database:
-* Exploit-DB
-* MIlw00rm
-* PacketStormSecurity
-* IEDB
-* IntelligentExploit
-* CVE
-* Siph0n
+XPL SEARCH is a multiplatform tool(Windows and Linux), 
+which was developed in PHP with the aim of helping the hacker community to find exploits or 'vulnerabilities', 
+using online databases, below is the list of databases which can be used in this release:
 
--------------------------------------------------------------------------------
-[ TO RUN THE SCRIPT ]----------------------------------------------------------
-PHP Version (cli) 5.5.8 or higher
+1. Exploit-DB
+2. MIlw00rm
+3. PacketStormSecurity
+4. IntelligentExploit
+5. IEDB
+6. CVE
+7. Siph0n
+
+Among the options that the script has, we can mention the following:
+* Search individual.
+* Search with multiple words(list).
+* Select which databases will be used for research.
+* Blocking specific databases.
+* Save log with the survey data.
+* Save the exploits/vulnerabilities found.
+* Use of proxy.
+* Set the time that the databases have to answer.
+* Conduct research just indicating the author's name.
+* Disable display of the banner.
+
+To learn more about the tool, access the wiki on github:
+https://github.com/CoderPirata/XPL-SEARCH/wiki
+
+Simple use:
+php xpl_search.php --search WORD_HERE
+
+Video demonstrating a simple search:
+https://www.youtube.com/watch?v=Ja_yTWBR1eE
+
+To use all the features as the tool provides, the following is recommended:
+PHP Version(cli) 5.5.8 or higher
  php5-cli         Lib
 cURL support      Enabled
  php5-curl        Lib
@@ -26,19 +48,18 @@ cURL Version      7.40.0 or higher
 allow_url_fopen   On
 Permission        Writing & Reading
 
--------------------------------------------------------------------------------
-[ ABOUT DEVELOPER ]------------------------------------------------------------
-Author_Nick       CoderPIRATA
-Author_Name       Eduardo
-Email             coderpirata@gmail.com
-Blog              http://coderpirata.blogspot.com.br/
-Twitter           https://twitter.com/coderpirata
-Google+           https://plus.google.com/103146866540699363823
-Pastebin          http://pastebin.com/u/CoderPirata
-Github            https://github.com/coderpirata/
+Installing:
+With git:
+git clone https://github.com/CoderPirata/XPL-SEARCH.git xpl_search
 
--------------------------------------------------------------------------------
-[ LOG ]------------------------------------------------------------------------
+With wget:
+wget https://raw.githubusercontent.com/CoderPirata/XPL-SEARCH/master/xpl%20search.php -O xpl_search.php
+
+With GitHub(web browser):
+https://github.com/CoderPirata/XPL-SEARCH/releases/latest
+
+|----------------------------------------------------------------------------------|
+[ LOG ]----------------------------------------------------------------------------|
 
 0.1 - [02/07/2015]
 - Started.
@@ -89,7 +110,17 @@ Github            https://github.com/coderpirata/
 - Bug on save-dir solved.
 - Others minor bugs solved.
 
-If you find any bug or want to make any suggestions, please contact me by email.
+0.9 - [19/11/2015]
+- Added Siph0n database - ID 7.
+- Update reworked.
+- Comment in script updated.
+- Adjustment in translation on "help page" - Thanks j3gb0.
+- Milw00rm domain changed.
+
+|----------------------------------------------------------------------------------|
+| If you find any bug or want to make any suggestions, please contact me by email. |
+'----------------------------------------------------------------------------------'
+
 */
 
 ini_set('error_log', NULL);
@@ -103,9 +134,8 @@ $long_opt = array('search:', 'search-list:', 'author:',
                   'proxy:', 'proxy-login:',
                   'set-db:', 'no-db:', 'cve-id:',
                   'update::', 'about::', 'help::', 'respond-time:', 'banner-no::');
-$oo = getopt('h::s:p:a::d:', $long_opt);
-define("VS", "0.8");
-
+$oo = getopt('h::s:p:a::', $long_opt);
+define("VS", "0.9");
 
 ####################################################################################################
 ## GENERAL FUNCTIONS
@@ -138,7 +168,7 @@ die(c("g1")."
 
 COMMAND: ".c("b")."--search".c("g1")." ~ Simple search
          Example: {$script} ".c("b")."--search ".c("g1")."\"name to search\"
-              Or: {$script} ".c("b")."-s ".c("g1")."\"name to serch\"
+              Or: {$script} ".c("b")."-s ".c("g1")."\"name to search\"
 
 COMMAND: ".c("b")."--help".c("g1")." ~ For view HELP
          Example: {$script} ".c("b")."--help".c("g1")."
@@ -162,9 +192,9 @@ COMMAND: ".c("b")."--set-db".c("g1")." ~ Select which databases will be used, us
            ".c("b")."4".c("g1")." - IntelligentExploit
            ".c("b")."5".c("g1")." - IEDB
            ".c("b")."6".c("g1")." - CVE
+           ".c("b")."7".c("g1")." - Siph0n
          Example: {$script} ".c("b")."--set-db".c("g1")." 1
                   {$script} ".c("b")."--set-db".c("g1")." 3,6,2
-              Or: {$script} ".c("b")."-d".c("g1")." 4,1
 			  
 COMMAND: ".c("b")."--no-db".c("g1")." ~ Remove the indicated databases, indicate the \"id\" of the database for remove.
          Example: {$script} ".c("b")."--no-db".c("g1")." 4
@@ -175,7 +205,7 @@ COMMAND: ".c("b")."--cve-id".c("g1")." ~ Displays the description and link of CV
 			  
 COMMAND: ".c("b")."--author".c("g1")." ~ Search for exploits writed by the \"Author\" seted.
          Example: {$script} ".c("b")."--author".c("g1")." CoderPirata
-          ".c("p")."* IntelligentExploit does not support this type of search.".c("g1")."
+          ".c("p")."* IntelligentExploit and Siph0n does not support this type of search.".c("g1")."
 				
 COMMAND: ".c("b")."--save".c("g1")." ~ Save the exploits found by the tool and to define in what folder save, add the dir after the command.
          Example: {$script} ".c("b")."--save".c("g1")."
@@ -213,28 +243,56 @@ die(c("g1")."
 \t\t /     \ |   )(   )|  | |  
 \t\t'       `'`-'  `-' `--`-`-' 
 
-".c("g2").".-----------------------------------------------------------------------------.
-[ ".c("g1")."XPL SEARCH ".VS.c("g2")." ]------------------------------------------------------------'".c("g1")."
-".c("b")."--".c("g1")." This tool aims to facilitate the search for exploits by hackers, currently is able to find exploits/vulnerabilities in six database:
-".c("b")."*".c("g1")." Exploit-DB
-".c("b")."*".c("g1")." MIlw00rm
-".c("b")."*".c("g1")." PacketStormSecurity
-".c("b")."*".c("g1")." IEDB
-".c("b")."*".c("g1")." IntelligentExploit
-".c("b")."*".c("g1")." CVE
+".c("g2").".----------------------------------------------------------------------------------.
+[ ".c("b")."XPL SEARCH 0.9".c("g2")." ][ ".c("g1")."Search exploits/vulnerabilities in multiple databases online.".c("g2")."  ]
 
-".c("g2").".-----------------------------------------------------------------------------.
-[ ".c("g1")."TO RUN THE SCRIPT".c("g2")." ]---------------------------------------------------------'".c("g1")."
-PHP Version       ".c("b")."5.6.8".c("g1")." or higher
- php5-cli         ".c("b")."Lib".c("g1")."
-cURL support      ".c("b")."Enabled".c("g1")."
- php5-curl        ".c("b")."Lib".c("g1")."
-cURL Version      ".c("b")."7.40.0".c("g1")." or higher
-allow_url_fopen   ".c("b")."On".c("g1")."
-Permission        ".c("b")."Writing".c("g2")." & ".c("b")."Reading".c("g2")."
+".c("g1")."XPL SEARCH was developed with the aim of helping the hacker community to find exploits or 'vulnerabilities', using online databases, below is the list of databases which can be used in this release:
+".c("b")."1. ".c("g1")."Exploit-DB
+".c("b")."2. ".c("g1")."MIlw00rm
+".c("b")."3. ".c("g1")."PacketStormSecurity
+".c("b")."4. ".c("g1")."IntelligentExploit
+".c("b")."5. ".c("g1")."IEDB
+".c("b")."6. ".c("g1")."CVE
+".c("b")."7. ".c("p")."Siph0n
 
-.-----------------------------------------------------------------------------.
-[ ".c("g1")."ABOUT DEVELOPER".c("g2")." ]-----------------------------------------------------------'".c("g1")."
+".c("g1")."Among the options that the script has, we can mention the following:
+".c("b")."* ".c("g1")."Search individual or with multiple words.
+".c("b")."* ".c("g1")."Select which databases will be used for research.
+".c("b")."* ".c("g1")."Blocking specific databases
+".c("b")."* ".c("g1")."Save log with the survey data.
+".c("b")."* ".c("g1")."Save the exploits/vulnerabilities found.
+".c("b")."* ".c("g1")."Use of proxy.
+".c("b")."* ".c("g1")."Set the time that the databases have to answer.
+".c("b")."* ".c("g1")."Conduct research just indicating the author's name.
+".c("b")."* ".c("g1")."Disable display of the banner.
+
+".c("g1")."To learn more about the tool, access the wiki on github:
+".c("b")."https://github.com/CoderPirata/XPL-SEARCH/wiki
+
+".c("g1")."Simple use:
+".c("b")."php xpl_search.php --search PALABRA_AQUI
+
+".c("g1")."Video demonstrating a simple search:
+".c("b")."https://www.youtube.com/watch?v=Ja_yTWBR1eE
+
+".c("g1")."To use all the features as the tool provides, the following is recommended:
+PHP Version(cli)  ".c("b")."5.5.8".c("")." or higher
+ php5-cli         ".c("b")."Lib".c("")."
+cURL support      ".c("b")."Enabled".c("")."
+ php5-curl        ".c("b")."Lib".c("")."
+cURL Version      ".c("b")."7.40.0 or higher".c("")."
+allow_url_fopen   ".c("b")."On".c("")."
+Permission        ".c("b")."Writing".c("g1")." & ".c("b")."Reading".c("g1")."
+
+".c("g1")."Installing
+With git:
+".c("b")."git clone https://github.com/CoderPirata/XPL-SEARCH.git xpl_search
+
+".c("g1")."With GitHub(web browser):
+".c("b")."https://github.com/CoderPirata/XPL-SEARCH/releases/latest
+
+".c("g2").".----------------------------------------------------------------------------------.
+[ ".c("b")."ABOUT DEVELOPER".c("g2")." ]----------------------------------------------------------------'".c("g1")."
 Author_Nick       ".c("b")."CoderPIRATA".c("g1")."
 Author_Name       ".c("b")."Eduardo".c("g1")."
 Email             ".c("b")."coderpirata@gmail.com".c("g1")."
@@ -247,16 +305,26 @@ Github            ".c("b")."https://github.com/coderpirata/".c("g2")."
 }
 
 function c($nome){
+/*
+b  -> Light blue
+g  -> Green
+g1 -> Light grey
+g2 -> Dark grey
+p  -> Purple
+r  -> Red light
+*/
 $c = array("r" => "\033[1;31m", "g" => "\033[0;32m", "b" => "\033[1;34m", "g2" => "\033[1;30m", "g1" => "\033[0;37m", "p" => "\033[0;35m");
-if(substr(strtolower(PHP_OS), 0, 3) != "win"){ return $c[strtolower($nome)]; }
+if(substr(strtolower(PHP_OS), 0, 3) != "win"){ 
+ return $c[strtolower($nome)];
+ }
 }
 
 function ccdbs($OPT){
-$ids = array(0,1,2,3,4,5,6);
+$ids = array(0,1,2,3,4,5,6,7);
 foreach($ids as $idz){
  foreach($OPT["db"] as $id){ if(!preg_match("/{$idz}/i", $id)){$o=$o+1;} }
 }
-if($o==7){$OPT["db"][] = 0;}
+if($o==8){$OPT["db"][] = 0;}
 
 return $OPT;
 }
@@ -270,7 +338,7 @@ if(isset($OPT["author"])){ $OPT["find"]=c("g1")."AUTHOR ".c("b").$OPT["author"].
 if(isset($OPT["cve-id"])){ $OPT["find"]=c("g1")."CVE-".c("b").$OPT["cve-id"].c("g2"); }
 
 if(isset($OPT["save"]) or isset($OPT["save-log"])){
-if(isset($OPT["save"]) and isset($OPT["save-log"])){ $s = c("b")."XPL's".c("g2")."|".c("b")."LOG"; }else
+if(isset($OPT["save"]) and isset($OPT["save-log"])){ $s = c("b")."XPL".c("g2")."|".c("b")."LOG"; }else
 if(isset($OPT["save"])){ $s = c("b")."EXPLOIT's"; }else
 if(isset($OPT["save-log"])){ $s = c("b")."LOG"; }
 
@@ -287,7 +355,8 @@ $save_xpl = $a.c("b")."YES".c("g2")."\n| ".c("g1")."SAVE IN ".c("b");
 $a=array(1 => c("g2")."[ ".c("b")."EXPLOIT-DB".c("g2")." ] ", 2 => c("g2")."[ ".c("b")."MILW00RM".c("g2")." ] ", 
 		 3 => c("g2")."[ ".c("b")."PACKETSTORMSECURITY".c("g2")." ] ", 
 		 4 => c("g2")."[ ".c("b")."INTELLIGENTEXPLOIT".c("g2")." ] ", 5 => c("g2")."[ ".c("b")."IEDB".c("g2")." ] ", 
-		 6 => c("g2")."[ ".c("b")."CVE".c("g2")." ] ");
+		 6 => c("g2")."[ ".c("b")."CVE".c("g2")." ] ", 
+		 7 => c("g2")."[ ".c("b")."SIPH0N".c("g2")." ] ");
 foreach($OPT["db"] as $id){ 
  foreach($a as $N => $W){ if(preg_match("/{$N}/i", $id) or isset($OPT["no-db"])){ $setdb .= $W; } } 
 }
@@ -313,15 +382,30 @@ return c("g2").".-[ ".c("g1")."Infos".c("g2")." ]-------------------------------
 }
 
 function update($OPT){
-echo c("g1")."\nUpdating, wait...\n";
+echo c("g2")."\nStarting...\n";
+echo c("g2")."Looking for a new version...";
 
 $OPT["url"] = "https://raw.githubusercontent.com/CoderPirata/XPL-SEARCH/master/xpl%20search.php";
 $update = browser($OPT);
 
-if(!preg_match("/#END/i", $update["file"])){ die(c("r")."\nIt seems that the code has not been fully updated.\n Canceled update, try again...\n"); }
+if($update["http_code"]>307 or $update["http_code"]==0){ echo c("g2")."Retrying... "; $update = browser($browser); }
+if($update["http_code"]>307 or $update["http_code"]==0){ echo die(c("r")."Error with the connection!\n\n".c("g2")); }
 
-file_put_contents(__FILE__,  $update["file"]);
-die(c("g")."\nUpdate DONE!");
+preg_match_all('#XPL SEARCH (.*?) ]#', $update["file"], $version);
+
+if($version[1][0] == VS){ die(c("g2")."\n\nThere are no updates available\n"); }else
+if($version[1][0] > VS){
+echo c("g2")."\n\nNew version found: ".c("g").$version[1][0]."\n";
+echo c("g1")."Updating the tool..\n";
+echo c("g1")."Warning: the source code of this tool will be ".c("p")."overwritten".c("g1")." with the new version!\n";
+
+if(file_put_contents(__FILE__,  $update["file"]) == FALSE){ 
+ die(c("r")."\nError in updating tool!\nMake sure you have sufficient permission for this.\n"); 
+}
+
+die(c("g")."\nSuccessfuly updated!\n\n");
+}
+
 }
 
 function save($save){
@@ -377,16 +461,27 @@ if(preg_match("/cve.mitre.org/i", $save["url"])) {
 $save["xpl"] = $save["description"];
 }else{ $ok=$ok+1; }
 
+if(preg_match("/siph0n.net/i", $save["url"])){ 
+$resultado = browser($save);
+preg_match_all('/pre>(.+)<\/pre/s', htmlspecialchars_decode($resultado["file"]), $xpl);
+$save["xpl"] = $xpl[1];
+if(preg_match("/# siph0n/i", $save["xpl"])){$ok=$ok+1;} 
+}
+
 if($ok!=6 and !empty($save["xpl"])){
 $save["title"] = trim(str_replace("/", "-", $save["title"]));
 if(isset($save["save-dir"])){
 if(!is_dir($save["save-dir"])){ goto pula; }
 $bmk = $save["save-dir"].$ds."logs".$ds;
-mkdir($bmk); mkdir($bmk.$save["find"].$ds); mkdir($bmk.$save["find"].$ds.$save["dbs"].$ds);
+mkdir($bmk); 
+mkdir($bmk.$save["find"].$ds); 
+mkdir($bmk.$save["find"].$ds.$save["dbs"].$ds);
 $bmk .= $save["find"].$ds.$save["dbs"].$ds;
 }else{ pula:
 $bmk = "logs".$ds;
-mkdir($bmk); mkdir($bmk.$save["find"].$ds); mkdir($bmk.$save["find"].$ds.$save["dbs"].$ds);
+mkdir($bmk); 
+mkdir($bmk.$save["find"].$ds); 
+mkdir($bmk.$save["find"].$ds.$save["dbs"].$ds);
 $bmk .= $save["find"].$ds.$save["dbs"].$ds;
 }
 
@@ -432,8 +527,8 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
 if(!empty($browser["time"])){
- curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, $browser["time"]);
- curl_setopt( $ch, CURLOPT_TIMEOUT, $browser["time"]);
+ curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $browser["time"]);
+ curl_setopt($ch, CURLOPT_TIMEOUT, $browser["time"]);
 }
 
 curl_setopt($ch, CURLOPT_USERAGENT, $UserAgent);
@@ -454,21 +549,20 @@ return $resultado;
 ####################################################################################################
 ## DATABASES
 function milw00rm($OPT){
-echo "\n".c("g2")."[ ".c("g1")."MILW00RM.org ".c("g2")."]:: ";	
+echo "\n".c("g2")."[ ".c("g1")."MILW00RM.com ".c("g2")."]:: ";	
 $resultado=NULL;
+$f=0000;
 $save=array();
 $info = array('search' => $OPT["find"], 'Submit' => 'Submit');
 if(isset($OPT["author"])){
-$browser = array("url" => "http://milw00rm.org/author.php?name=".urlencode($OPT["author"]), "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
+$browser = array("url" => "https://milw00rm.com/author.php?name=".urlencode($OPT["author"]), "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 }else{
-$browser = array("url" => "http://milw00rm.org/search.php", "proxy" => $OPT["proxy"], "post" => $info, "time" => $OPT["time"]);
+$browser = array("url" => "https://milw00rm.com/search.php", "proxy" => $OPT["proxy"], "post" => $info, "time" => $OPT["time"]);
 }
 $resultado = browser($browser);
 
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("g2")."Retrying... "; $resultado = browser($browser); }
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("g2")."Retrying... "; $resultado = browser($browser); }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
 
 if(!preg_match('/<td class="style1">-::DATE<\/td>/i', $resultado["file"]) or empty($resultado["file"])){ 
 echo c("r")."NOT FOUND\n".c("g2");
@@ -496,6 +590,7 @@ if($OPT["save"]==1){ echo save($LAIA); }else{ echo "|\n"; }
 if($OPT["save-log"]==1){echo save_log($LAIA);}
 $i++;
 }
+
 echo c("g2")."'-----------------------------------------------------------------------------'\n";
 }
 $LAIA = array();
@@ -513,10 +608,8 @@ $browser = array("url" => "https://packetstormsecurity.com/search/?q=".urlencode
 }
 $resultado = browser($browser);
 
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("g2")."Retrying... "; $resultado = browser($browser); }
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("g2")."Retrying... "; $resultado = browser($browser); }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
 
 if(preg_match('/<title>No Results Found/i', $resultado["file"]) or empty($resultado["file"])){ 
 echo c("r")."NOT FOUND\n".c("g2");
@@ -572,10 +665,8 @@ $browser = array("url" => "http://iedb.ir/search.php", "proxy" => $OPT["proxy"],
 }
 $resultado = browser($browser);
 
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("g2")."Retrying... "; $resultado = browser($browser); }
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("g2")."Retrying... "; $resultado = browser($browser); }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
 
 if(!preg_match('/<td class="style1">-::DATE<\/td>/i', $resultado["file"]) or empty($resultado["file"])){ 
 echo c("r")."NOT FOUND\n".c("g2");
@@ -615,10 +706,8 @@ if(isset($OPT["author"])){ echo c("r")."This db does not support this type of se
 $browser = array("url" => "http://www.intelligentexploit.com/api/search-exploit?name=".urlencode($OPT["find"]), "proxy" => $OPT["proxy"], "time" => $OPT["time"]);
 $resultado = browser($browser);
 
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("g2")."Retrying... "; $resultado = browser($browser); }
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("g2")."Retrying... "; $resultado = browser($browser); }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
 
 if(empty($resultado["file"])){
 echo c("r")."NOT FOUND\n".c("g2");
@@ -641,7 +730,6 @@ $save["dbs"]="INTELLIGENTEXPLOIT";
 $LAIA = array_merge($save, $OPT);
 if($OPT["save"]==1){ echo save($LAIA); }else{ echo "|\n"; }
 if($OPT["save-log"]==1){echo save_log($LAIA);}
-
 $i++;
 }
 echo c("g1")."'-----------------------------------------------------------------------------'\n";
@@ -661,15 +749,13 @@ $browser = array("url" => "https://www.exploit-db.com/search/?action=search&desc
 }
 
 $resultado = browser($browser);
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("g2")."Retrying... "; $resultado = browser($browser); }
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){
-echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("g2")."Retrying... "; $resultado = browser($browser); }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
 
 if(preg_match('/No results/i', $resultado["file"]) or empty($resultado["file"])){
 echo c("r")."NOT FOUND\n".c("g2");
 }else{
-echo c("g")."FOUND\n".c("g2")."+-----------------------------------------------------------------------------.\n|\n";
+echo c("g")."FOUND\n".c("g2").".-----------------------------------------------------------------------------.\n|\n";
 
 while($id_pages < 100){ $id_info=0;
 preg_match_all('/<td class="date">(.*?)<\/tr>/s', $resultado['file'], $source);
@@ -724,16 +810,14 @@ $browser = array("url" => "http://cve.mitre.org/cgi-bin/cvename.cgi?name=".$OPT[
 }
 $resultado = browser($browser);
 
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){ 
-echo c("g2")."Retrying... "; $resultado = browser($browser); } 
-if($resultado["http_code"]>307 or $resultado["http_code"]==0){ 
-echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("g2")."Retrying... "; $resultado = browser($browser); } 
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
 
 if(preg_match("/There are <b>0<\/b> CVE entries that match your search/i", $resultado["file"]) or 
    preg_match("ERROR: Couldn't find/i", $resultado["file"]) or empty($resultado["file"])){
 echo c("r")."NOT FOUND\n".c("g2");
 }else{
-echo c("g")."FOUND\n".c("g2")."+-----------------------------------------------------------------------------.\n|\n";
+echo c("g")."FOUND\n".c("g2").".-----------------------------------------------------------------------------.\n|\n";
 
 if(isset($OPT["find"])){
 preg_match_all('/<table cellpadding="0" cellspacing="0" border="0" width="100%">(.*?)<\/table>/s', $resultado["file"], $source);
@@ -789,6 +873,59 @@ if($OPT["save-log"]==1){echo save_log($LAIA);}
 }
 
 fim_:
+echo c("g2")."'-----------------------------------------------------------------------------'\n";
+}
+saida:
+}
+
+function siph0n($OPT){
+echo "\n".c("g2")."[ ".c("g1")."SIPH0N.in ".c("g2")."]:: ";	
+$resultado=NULL;
+
+if(isset($OPT["author"])){
+echo c("r")."Not available\n";
+goto saida;
+}else{
+$info = array('search' => $OPT["find"], 'Submit' => 'Submit');
+$browser = array("url" => "http://siph0n.in/", "proxy" => $OPT["proxy"], "post" => $info, "time" => $OPT["time"]);
+}
+
+$resultado = browser($browser);
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("g2")."Retrying... "; $resultado = browser($browser); }
+if($resultado["http_code"]>307 or $resultado["http_code"]==0){ echo c("r")."Error with the connection...\n\n".c("g2"); goto saida; }
+
+$la=0;
+$a = explode("\n", $resultado["file"]);
+foreach($a as $line){ if($line == "<br><br><b>[ Search Results ]</b><br>")$la=1; }
+if($la!=1){
+echo c("r")."NOT FOUND\n".c("g2");
+}else{
+echo c("g")."FOUND\n".c("g2").".-----------------------------------------------------------------------------.\n|\n";
+
+preg_match_all('/<table width="597" align="center" border="0">(.*?)<\/table>/s', $resultado["file"], $data_brute);
+$data_brute_2 = explode("</tr>", $data_brute[0][0]);
+unset($data_brute_2[0]);
+unset($data_brute_2[count($data_brute_2)]);
+
+foreach($data_brute_2 as $data){
+preg_match_all('#<td class="style1" nowrap="nowrap" width="62">(.*?)</td>#', $data, $date);		
+preg_match_all('#<td nowrap="nowrap" width="375"><a href="(.*?)" target="_blank" class="style1">(.*?)</a></td>#', $data, $title_link);
+preg_match_all('#<a href=".*">(.*?)</a>#', $data, $author);
+
+echo c("g2")."| ".c("g1")."AUTHOR:: ".$author[1][2]."\n";
+echo c("g2")."| ".c("g1")."DATE:: ".$date[1][0]."\n";
+echo c("g2")."| ".c("g1")."TITLE:: ".c("b").trim(html_entity_decode(htmlspecialchars_decode($title_link[2][0])))."\n";
+echo c("g2")."| ".c("g1")."LINK:: ".c("b")."http://siph0n.in/{$title_link[1][0]}".c("g2")."\n".c("g2");
+
+$save["author"] = $author[1][2];
+$save["date"] = $date[1][0];
+$save["title"] = trim(html_entity_decode(htmlspecialchars_decode($title_link[2][0])));
+$save["url"] = "http://siph0n.in/".$title_link[1][0]; 	
+$save["dbs"] = "SIPH0N";
+if($OPT["save"]==1){echo save($save);}else{ echo "|\n"; }
+if($OPT["save-log"]==1){echo save_log($save);}
+}
+
 echo c("g2")."'-----------------------------------------------------------------------------'\n";
 }
 saida:
@@ -856,10 +993,9 @@ foreach($OPT["db"] as $id){
  if(preg_match("/3/i", $id) or $id == 0 and !preg_match("/3/i", $OPT["no-db"])){ echo packetstormsecurity($OPT); }
  if(preg_match("/4/i", $id) or $id == 0 and !preg_match("/4/i", $OPT["no-db"])){ echo intelligentexploit($OPT);  }
  if(preg_match("/5/i", $id) or $id == 0 and !preg_match("/5/i", $OPT["no-db"])){ echo iedb($OPT);                }
- if(preg_match("/6/i", $id) or $id == 0 and !preg_match("/6/i", $OPT["no-db"])){ echo CVE($OPT);   
+ if(preg_match("/6/i", $id) or $id == 0 and !preg_match("/6/i", $OPT["no-db"])){ echo CVE($OPT);                 }
  if(preg_match("/7/i", $id) or $id == 0 and !preg_match("/7/i", $OPT["no-db"])){ echo siph0n($OPT);              }
  }
-}
 }
 
 #END

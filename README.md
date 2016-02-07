@@ -3,7 +3,9 @@ XPL SEARCH
 ```
 Search exploits/vulnerabilities in multiple databases online!
 
-XPL SEARCH is a multiplatform tool(Windows and Linux), which was developed in PHP with the aim of helping the hacker community to find exploits or 'vulnerabilities', using online databases, below is the list of databases which can be used in this release:
+XPL SEARCH is a multiplatform tool(Windows and Linux), which was developed in PHP with the aim of helping the hacker 
+community to find exploits or 'vulnerabilities', using online databases, below is the list of databases which 
+can be used in this release:
 1. Exploit-DB
 2. MIlw00rm
 3. PacketStormSecurity

@@ -114,7 +114,7 @@ Or run in terminal: sudo apt-get install php5 php5-cli php5-curl curl libcurl3
 - Adjustment in translation on "help page" - Thanks j3gb0.
 - Milw00rm domain changed.
 
-1.0 - [00/00/2016]
+1.0 - [07/02/2016]
 - Added Dependencies installation function.
 - Added Color Theme function.
 - Added command to force update.

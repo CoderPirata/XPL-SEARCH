@@ -146,4 +146,4 @@ Screenshot
 ![images](http://3.bp.blogspot.com/-SoUb9FnrRvo/Vk4itKD8M8I/AAAAAAAAANA/WWOITDYllCw/s1600/search-siph0n.png)
 
 
-If you find any bug or want to make any suggestions, please contact me by email
+***If you find any bug or want to make any suggestions, please contact me by email.***
